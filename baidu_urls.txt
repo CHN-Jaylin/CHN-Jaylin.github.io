@@ -1,0 +1,15 @@
+https://jayl1n.github.io/2019/08/19/pentest-getpassword/
+https://jayl1n.github.io/2019/06/26/sctf-2019-babyEoP-Writeup/
+https://jayl1n.github.io/2019/01/08/tools-load-shellcode/
+https://jayl1n.github.io/2018/12/30/java-audit-step-by-step-4/
+https://jayl1n.github.io/2018/11/15/java-audit-step-by-step-3/
+https://jayl1n.github.io/2018/10/29/java-audit-step-by-step-2/
+https://jayl1n.github.io/2018/10/25/java-audit-step-by-step-1/
+https://jayl1n.github.io/2018/10/25/java-audit-step-by-step-0/
+https://jayl1n.github.io/2018/10/05/pentest-20181005/
+https://jayl1n.github.io/2018/09/18/summary-command-execution/
+https://jayl1n.github.io/2018/09/11/ichunqiu-web-BLOG/
+https://jayl1n.github.io/2018/09/10/ichunqiu-web-SQLi/
+https://jayl1n.github.io/2018/09/09/daily-life-20180909/
+https://jayl1n.github.io/2018/08/01/crawl-admin5/
+https://jayl1n.github.io/2018/07/31/yesterday-and-tomorrow/
