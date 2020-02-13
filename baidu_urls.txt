@@ -1,3 +1,4 @@
+https://jayl1n.github.io/2020/02/13/java-nohup-implementation/
 https://jayl1n.github.io/2020/01/04/happy-new-year-2020/
 https://jayl1n.github.io/2019/06/26/sctf-2019-babyEoP-Writeup/
 https://jayl1n.github.io/2019/03/29/pentest-getpassword/
