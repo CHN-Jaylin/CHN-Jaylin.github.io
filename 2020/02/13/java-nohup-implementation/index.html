@@ -16,19 +16,19 @@
 
 
 
-<meta name="description" content="常用的将程序放到后台执行，并在shell退出后依然运行的方法，是使用 nohup 与 &amp;amp;，比如 nohup java -jar abc.jar &amp;amp;。 先说原理： nohup 的作用是忽略 SIGHUP 信号。当一个shell关闭后，会向运行的程序发送 SIGHUP 信号，通知同一shell内的各个进程，它们与控制终端不再关联。系统对 SIGHUP 信号的默认处理是终止收到该信号的进">
+<meta name="description" content="常用的将程序放到后台执行，并在shell退出后依然运行的方法，是使用 nohup 与 &amp;amp;，比如 nohup java -jar abc.jar &amp;amp;。 原理nohup 的作用是忽略 SIGHUP 信号。当一个shell关闭后，会向运行的程序发送 SIGHUP 信号，通知同一shell内的各个进程，它们与控制终端不再关联。系统对 SIGHUP 信号的默认处理是终止收到该信号的进程。 &amp;">
 <meta name="keywords" content="Java">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java 实现后台执行">
 <meta property="og:url" content="https://jayl1n.github.io/2020/02/13/java-nohup-implementation/index.html">
 <meta property="og:site_name" content="Jayl1n&#39;s Blog">
-<meta property="og:description" content="常用的将程序放到后台执行，并在shell退出后依然运行的方法，是使用 nohup 与 &amp;amp;，比如 nohup java -jar abc.jar &amp;amp;。 先说原理： nohup 的作用是忽略 SIGHUP 信号。当一个shell关闭后，会向运行的程序发送 SIGHUP 信号，通知同一shell内的各个进程，它们与控制终端不再关联。系统对 SIGHUP 信号的默认处理是终止收到该信号的进">
+<meta property="og:description" content="常用的将程序放到后台执行，并在shell退出后依然运行的方法，是使用 nohup 与 &amp;amp;，比如 nohup java -jar abc.jar &amp;amp;。 原理nohup 的作用是忽略 SIGHUP 信号。当一个shell关闭后，会向运行的程序发送 SIGHUP 信号，通知同一shell内的各个进程，它们与控制终端不再关联。系统对 SIGHUP 信号的默认处理是终止收到该信号的进程。 &amp;">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://jayl1n.github.io/2020/02/13/java-nohup-implementation/xg.gif">
-<meta property="og:updated_time" content="2020-02-13T06:27:07.913Z">
+<meta property="og:updated_time" content="2020-02-13T07:01:43.937Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java 实现后台执行">
-<meta name="twitter:description" content="常用的将程序放到后台执行，并在shell退出后依然运行的方法，是使用 nohup 与 &amp;amp;，比如 nohup java -jar abc.jar &amp;amp;。 先说原理： nohup 的作用是忽略 SIGHUP 信号。当一个shell关闭后，会向运行的程序发送 SIGHUP 信号，通知同一shell内的各个进程，它们与控制终端不再关联。系统对 SIGHUP 信号的默认处理是终止收到该信号的进">
+<meta name="twitter:description" content="常用的将程序放到后台执行，并在shell退出后依然运行的方法，是使用 nohup 与 &amp;amp;，比如 nohup java -jar abc.jar &amp;amp;。 原理nohup 的作用是忽略 SIGHUP 信号。当一个shell关闭后，会向运行的程序发送 SIGHUP 信号，通知同一shell内的各个进程，它们与控制终端不再关联。系统对 SIGHUP 信号的默认处理是终止收到该信号的进程。 &amp;">
 <meta name="twitter:image" content="https://jayl1n.github.io/2020/02/13/java-nohup-implementation/xg.gif">
 
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -329,10 +329,9 @@
       
           
         <p>常用的将程序放到后台执行，并在shell退出后依然运行的方法，是使用 <code>nohup</code> 与 <code>&amp;</code>，比如 <code>nohup java -jar abc.jar &amp;</code>。</p>
-<p>先说原理：</p>
-<p><code>nohup</code> 的作用是忽略 <code>SIGHUP</code> 信号。当一个shell关闭后，会向运行的程序发送 <code>SIGHUP</code> 信号，通知同一shell内的各个进程，它们与控制终端不再关联。系统对 <code>SIGHUP</code> 信号的默认处理是终止收到该信号的进程。</p>
+<h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p><code>nohup</code> 的作用是忽略 <code>SIGHUP</code> 信号。当一个shell关闭后，会向运行的程序发送 <code>SIGHUP</code> 信号，通知同一shell内的各个进程，它们与控制终端不再关联。系统对 <code>SIGHUP</code> 信号的默认处理是终止收到该信号的进程。</p>
 <p><code>&amp;</code> 的作用是忽略 <code>SIGINT</code> 信号。<code>Ctrl+C</code> 会向前台进程发送 <code>SIGINT</code> 信号，以关闭程序。</p>
-<p>综上，只要我们能实现 <code>nohup</code> 和 <code>&amp;</code> 的功能，就能让程序在后台运行，不会因为 shell 断开而中断了。</p>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>综上，只要我们能实现 <code>nohup</code> 和 <code>&amp;</code> 的功能，就能让程序在后台运行，不会因为 shell 断开而中断了。</p>
 <p>由于题目是用 Java 实现，而 Java 本身并不能进行如此底层的操作，所以思路是使用 JNI，借助 C/C++ 实现。</p>
 <p>直接上代码：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> io.github.jayl1n.daemon;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">native</span> <span class="keyword">boolean</span> <span class="title">ignoreSignal</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -372,7 +371,7 @@
         <p><span>本文标题:</span><a href="">Java 实现后台执行</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Jayl1n</a></p>
         <p><span>发布时间:</span>2020-02-13, 14:12:04</p>
-        <p><span>最后更新:</span>2020-02-13, 14:27:07</p>
+        <p><span>最后更新:</span>2020-02-13, 15:01:43</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="" title="Java 实现后台执行">https://jayl1n.github.io/2020/02/13/java-nohup-implementation/</a>
             <span class="copy-path" data-clipboard-text="原文: https://jayl1n.github.io/2020/02/13/java-nohup-implementation/　　作者: Jayl1n" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -402,7 +401,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#进阶-——-免疫-kill-命令"><span class="toc-number">1.</span> <span class="toc-text">进阶 —— 免疫 kill 命令</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#References"><span class="toc-number">2.</span> <span class="toc-text">References</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#原理"><span class="toc-number">1.</span> <span class="toc-text">原理</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#实现"><span class="toc-number">2.</span> <span class="toc-text">实现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#进阶-——-免疫-kill-命令"><span class="toc-number">3.</span> <span class="toc-text">进阶 —— 免疫 kill 命令</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#References"><span class="toc-number">4.</span> <span class="toc-text">References</span></a></li></ol>
         
     </div>
     <style>
