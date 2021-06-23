@@ -1,3 +1,5 @@
+https://jayl1n.github.io/2021/06/23/use-inlinehook-technology-to-make-a-more-general-webshell/
+https://jayl1n.github.io/2021/06/23/compile-v8-on-windows10/
 https://jayl1n.github.io/2021/02/05/antiav-jsp-webshell/
 https://jayl1n.github.io/2021/01/03/compile-virtualbox-on-macos10-15/
 https://jayl1n.github.io/2020/04/10/pentest-cobaltstrike-improve/
