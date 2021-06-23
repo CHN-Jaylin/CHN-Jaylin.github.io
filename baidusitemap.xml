@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://jayl1n.github.io/2021/06/23/use-inlinehook-technology-to-make-a-more-general-webshell/</loc>
-    <lastmod>2021-06-23T12:52:41.692Z</lastmod>
-  </url>  <url>
     <loc>https://jayl1n.github.io/2021/06/23/compile-v8-on-windows10/</loc>
     <lastmod>2021-06-23T12:50:59.107Z</lastmod>
   </url>  <url>
