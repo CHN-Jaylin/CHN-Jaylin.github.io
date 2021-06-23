@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://jayl1n.github.io/"/>
-  <updated>2021-06-23T12:50:59.107Z</updated>
+  <updated>2021-06-23T12:55:02.315Z</updated>
   <id>https://jayl1n.github.io/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="https://jayl1n.github.io/2021/06/23/compile-v8-on-windows10/"/>
     <id>https://jayl1n.github.io/2021/06/23/compile-v8-on-windows10/</id>
     <published>2021-06-23T12:40:40.000Z</published>
-    <updated>2021-06-23T12:50:59.107Z</updated>
+    <updated>2021-06-23T12:55:02.315Z</updated>
     
     <content type="html"><![CDATA[<p>记录一下编译 V8 踩坑的过程（以下全程需要科学上网，我是配了 Proxifier）</p><h1 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h1><ol start="0"><li><p>先安装 VisualStudio 2019，略详细过程</p></li><li><p>clone 开发环境</p> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd /d d:\</span><br><span class="line"></span><br><span class="line">git clone https://chromium.googlesource.com/chromium/tools/depot_tools</span><br></pre></td></tr></table></figure></li><li><p>设置环境变量</p> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set DEPOT_TOOLS_WIN_TOOLCHAIN = 0</span><br><span class="line">set GYP_MSVS_VERSION = 2019    # 或者 2017</span><br></pre></td></tr></table></figure></li><li><p>clone v8 仓库，完整的大概 700M</p> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fetch v8</span><br></pre></td></tr></table></figure></li><li><p>同步第三方组件，会花一点时间</p> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gclient sync</span><br></pre></td></tr></table></figure></li><li><p>生成编译配置</p> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python tools/dev/v8gen.py ia32.debug</span><br></pre></td></tr></table></figure></li><li><p>编译，大概 10 分钟</p> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ninja -C .\out.gn\ia32.debug d8 -j12</span><br></pre></td></tr></table></figure></li><li><p>完成</p></li></ol><h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><h2 id="提示缺少-LASTCHANGE"><a href="#提示缺少-LASTCHANGE" class="headerlink" title="提示缺少 LASTCHANGE"></a>提示缺少 LASTCHANGE</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python .\build\util\lastchange.py .\build\util\LASTCHANGE</span><br></pre></td></tr></table></figure><h2 id="找不到-clang-cl-exe"><a href="#找不到-clang-cl-exe" class="headerlink" title="找不到 clang-cl.exe"></a>找不到 clang-cl.exe</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python .\tools\clang\scripts\update.py</span><br></pre></td></tr></table></figure>]]></content>
     
@@ -37,6 +37,8 @@
     </summary>
     
     
+    
+      <category term="开发" scheme="https://jayl1n.github.io/tags/%E5%BC%80%E5%8F%91/"/>
     
   </entry>
   
@@ -64,11 +66,11 @@
     
       <category term="Java" scheme="https://jayl1n.github.io/tags/Java/"/>
     
-      <category term="RedTeam" scheme="https://jayl1n.github.io/tags/RedTeam/"/>
+      <category term="JSP" scheme="https://jayl1n.github.io/tags/JSP/"/>
     
       <category term="红蓝对抗" scheme="https://jayl1n.github.io/tags/%E7%BA%A2%E8%93%9D%E5%AF%B9%E6%8A%97/"/>
     
-      <category term="JSP" scheme="https://jayl1n.github.io/tags/JSP/"/>
+      <category term="RedTeam" scheme="https://jayl1n.github.io/tags/RedTeam/"/>
     
   </entry>
   
@@ -119,9 +121,9 @@
     
     
     
-      <category term="RedTeam" scheme="https://jayl1n.github.io/tags/RedTeam/"/>
-    
       <category term="红蓝对抗" scheme="https://jayl1n.github.io/tags/%E7%BA%A2%E8%93%9D%E5%AF%B9%E6%8A%97/"/>
+    
+      <category term="RedTeam" scheme="https://jayl1n.github.io/tags/RedTeam/"/>
     
       <category term="Pentest" scheme="https://jayl1n.github.io/tags/Pentest/"/>
     
@@ -270,9 +272,9 @@
     
     
     
-      <category term="代码审计" scheme="https://jayl1n.github.io/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
-    
       <category term="Java" scheme="https://jayl1n.github.io/tags/Java/"/>
+    
+      <category term="代码审计" scheme="https://jayl1n.github.io/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
     
   </entry>
   
@@ -303,9 +305,9 @@
     
     
     
-      <category term="代码审计" scheme="https://jayl1n.github.io/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
-    
       <category term="Java" scheme="https://jayl1n.github.io/tags/Java/"/>
+    
+      <category term="代码审计" scheme="https://jayl1n.github.io/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
     
   </entry>
   
@@ -327,9 +329,9 @@
     
     
     
-      <category term="代码审计" scheme="https://jayl1n.github.io/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
-    
       <category term="Java" scheme="https://jayl1n.github.io/tags/Java/"/>
+    
+      <category term="代码审计" scheme="https://jayl1n.github.io/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
     
   </entry>
   
@@ -350,9 +352,9 @@
     
     
     
-      <category term="代码审计" scheme="https://jayl1n.github.io/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
-    
       <category term="Java" scheme="https://jayl1n.github.io/tags/Java/"/>
+    
+      <category term="代码审计" scheme="https://jayl1n.github.io/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
     
   </entry>
   
@@ -376,9 +378,9 @@
     
     
     
-      <category term="代码审计" scheme="https://jayl1n.github.io/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
-    
       <category term="Java" scheme="https://jayl1n.github.io/tags/Java/"/>
+    
+      <category term="代码审计" scheme="https://jayl1n.github.io/tags/%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/"/>
     
   </entry>
   
@@ -469,9 +471,9 @@
     
     
     
-      <category term="Web" scheme="https://jayl1n.github.io/tags/Web/"/>
-    
       <category term="i春秋" scheme="https://jayl1n.github.io/tags/i%E6%98%A5%E7%A7%8B/"/>
+    
+      <category term="Web" scheme="https://jayl1n.github.io/tags/Web/"/>
     
       <category term="BLOG" scheme="https://jayl1n.github.io/tags/BLOG/"/>
     
@@ -496,11 +498,11 @@
     
     
     
+      <category term="i春秋" scheme="https://jayl1n.github.io/tags/i%E6%98%A5%E7%A7%8B/"/>
+    
       <category term="Web" scheme="https://jayl1n.github.io/tags/Web/"/>
     
       <category term="SQLi" scheme="https://jayl1n.github.io/tags/SQLi/"/>
-    
-      <category term="i春秋" scheme="https://jayl1n.github.io/tags/i%E6%98%A5%E7%A7%8B/"/>
     
   </entry>
   
