@@ -295,8 +295,8 @@
     <article id="post-use-inlinehook-technology-to-make-a-more-general-webshell" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
-      <a href="2021/06/25/use-inlinehook-technology-to-make-a-more-general-webshell/" class="article-date">
-      <time datetime="2021-06-25T12:08:53.000Z" itemprop="datePublished">2021-06-25</time>
+      <a href="2021/07/01/use-inlinehook-technology-to-make-a-more-general-webshell/" class="article-date">
+      <time datetime="2021-07-01T12:08:53.000Z" itemprop="datePublished">2021-07-01</time>
 </a>
 
 
@@ -311,7 +311,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="2021/06/25/use-inlinehook-technology-to-make-a-more-general-webshell/">利用 Hook 技术打造通用的 Webshell</a>
+      <a class="article-title" href="2021/07/01/use-inlinehook-technology-to-make-a-more-general-webshell/">利用 Hook 技术打造通用的 Webshell</a>
     </h1>
   
 
@@ -322,6 +322,9 @@
       
           
         <blockquote>
+<p>本文首发 <a href="https://xz.aliyun.com/t/9774" target="_blank" rel="noopener">https://xz.aliyun.com/t/9774</a></p>
+</blockquote>
+<blockquote>
 <p>标题中的 “通用” 指跨语言，本文的实现是基于 Windows 的，需要 Linux 的可以参考本文的思路，实现起来并没有太大区别。</p>
 </blockquote>
 <h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>Windows 上程序涉及网络 socket 操作，一般都会用到 winsock2 的库，程序会动态链接 <code>ws2_32.dll</code> ，JVM，Python，Zend 等解释器都不例外。</p>
@@ -341,8 +344,8 @@
 </blockquote>
 <h2 id="DllMain"><a href="#DllMain" class="headerlink" title="DllMain"></a>DllMain</h2><p>DLL 入口，调用安装钩子</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL WINAPI <span class="title">DllMain</span><span class="params">(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">switch</span>(fdwReason)</span><br><span class="line">	&#123;</span><br><span class="line">	<span class="keyword">case</span> DLL_PROCESS_ATTACH:</span><br><span class="line">		InstallHook(<span class="string">L"ws2_32.dll"</span>, <span class="string">"recv"</span>, (LPVOID) HookRecv);</span><br><span class="line">		InstallHook(<span class="string">L"ws2_32.dll"</span>, <span class="string">"WSARecv"</span>, (LPVOID) HookWSARecv);</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">case</span> DLL_THREAD_ATTACH:</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">case</span> DLL_THREAD_DETACH:</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">case</span> DLL_PROCESS_DETACH:</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h1><h2 id="Java"><a href="#Java" class="headerlink" title="Java"></a>Java</h2><p><img src="/2021/06/25/use-inlinehook-technology-to-make-a-more-general-webshell/java.gif" alt="java"></p>
-<h2 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h2><p><img src="/2021/06/25/use-inlinehook-technology-to-make-a-more-general-webshell/python.gif" alt="python"></p>
+<h1 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h1><h2 id="Java"><a href="#Java" class="headerlink" title="Java"></a>Java</h2><p><img src="/2021/07/01/use-inlinehook-technology-to-make-a-more-general-webshell/java.gif" alt="java"></p>
+<h2 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h2><p><img src="/2021/07/01/use-inlinehook-technology-to-make-a-more-general-webshell/python.gif" alt="python"></p>
 
       
     </div>

@@ -16,21 +16,21 @@
 
 
 
-<meta name="description" content="标题中的 “通用” 指跨语言，本文的实现是基于 Windows 的，需要 Linux 的可以参考本文的思路，实现起来并没有太大区别。  原理Windows 上程序涉及网络 socket 操作，一般都会用到 winsock2 的库，程序会动态链接 ws2_32.dll ，JVM，Python，Zend 等解释器都不例外。 winsock2 里 socket 操作相关的函数 recv send cl">
+<meta name="description" content="本文首发 https://xz.aliyun.com/t/9774   标题中的 “通用” 指跨语言，本文的实现是基于 Windows 的，需要 Linux 的可以参考本文的思路，实现起来并没有太大区别。  原理Windows 上程序涉及网络 socket 操作，一般都会用到 winsock2 的库，程序会动态链接 ws2_32.dll ，JVM，Python，Zend 等解释器都不例外。 wi">
 <meta name="keywords" content="开发,Java,RedTeam,红蓝对抗,工具分享">
 <meta property="og:type" content="article">
 <meta property="og:title" content="利用 Hook 技术打造通用的 Webshell">
-<meta property="og:url" content="https://jayl1n.github.io/2021/06/25/use-inlinehook-technology-to-make-a-more-general-webshell/index.html">
+<meta property="og:url" content="https://jayl1n.github.io/2021/07/01/use-inlinehook-technology-to-make-a-more-general-webshell/index.html">
 <meta property="og:site_name" content="Jayl1n&#39;s Blog">
-<meta property="og:description" content="标题中的 “通用” 指跨语言，本文的实现是基于 Windows 的，需要 Linux 的可以参考本文的思路，实现起来并没有太大区别。  原理Windows 上程序涉及网络 socket 操作，一般都会用到 winsock2 的库，程序会动态链接 ws2_32.dll ，JVM，Python，Zend 等解释器都不例外。 winsock2 里 socket 操作相关的函数 recv send cl">
+<meta property="og:description" content="本文首发 https://xz.aliyun.com/t/9774   标题中的 “通用” 指跨语言，本文的实现是基于 Windows 的，需要 Linux 的可以参考本文的思路，实现起来并没有太大区别。  原理Windows 上程序涉及网络 socket 操作，一般都会用到 winsock2 的库，程序会动态链接 ws2_32.dll ，JVM，Python，Zend 等解释器都不例外。 wi">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="https://jayl1n.github.io/2021/06/25/use-inlinehook-technology-to-make-a-more-general-webshell/java.gif">
-<meta property="og:image" content="https://jayl1n.github.io/2021/06/25/use-inlinehook-technology-to-make-a-more-general-webshell/python.gif">
-<meta property="og:updated_time" content="2021-06-25T06:32:24.557Z">
+<meta property="og:image" content="https://jayl1n.github.io/2021/07/01/use-inlinehook-technology-to-make-a-more-general-webshell/java.gif">
+<meta property="og:image" content="https://jayl1n.github.io/2021/07/01/use-inlinehook-technology-to-make-a-more-general-webshell/python.gif">
+<meta property="og:updated_time" content="2021-07-01T08:55:55.068Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="利用 Hook 技术打造通用的 Webshell">
-<meta name="twitter:description" content="标题中的 “通用” 指跨语言，本文的实现是基于 Windows 的，需要 Linux 的可以参考本文的思路，实现起来并没有太大区别。  原理Windows 上程序涉及网络 socket 操作，一般都会用到 winsock2 的库，程序会动态链接 ws2_32.dll ，JVM，Python，Zend 等解释器都不例外。 winsock2 里 socket 操作相关的函数 recv send cl">
-<meta name="twitter:image" content="https://jayl1n.github.io/2021/06/25/use-inlinehook-technology-to-make-a-more-general-webshell/java.gif">
+<meta name="twitter:description" content="本文首发 https://xz.aliyun.com/t/9774   标题中的 “通用” 指跨语言，本文的实现是基于 Windows 的，需要 Linux 的可以参考本文的思路，实现起来并没有太大区别。  原理Windows 上程序涉及网络 socket 操作，一般都会用到 winsock2 的库，程序会动态链接 ws2_32.dll ，JVM，Python，Zend 等解释器都不例外。 wi">
+<meta name="twitter:image" content="https://jayl1n.github.io/2021/07/01/use-inlinehook-technology-to-make-a-more-general-webshell/java.gif">
 
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
@@ -293,7 +293,7 @@
   
     <div class="article-meta">
       <a href="" class="article-date">
-      <time datetime="2021-06-25T12:08:53.000Z" itemprop="datePublished">2021-06-25</time>
+      <time datetime="2021-07-01T12:08:53.000Z" itemprop="datePublished">2021-07-01</time>
 </a>
 
 
@@ -330,6 +330,9 @@
       
           
         <blockquote>
+<p>本文首发 <a href="https://xz.aliyun.com/t/9774" target="_blank" rel="noopener">https://xz.aliyun.com/t/9774</a></p>
+</blockquote>
+<blockquote>
 <p>标题中的 “通用” 指跨语言，本文的实现是基于 Windows 的，需要 Linux 的可以参考本文的思路，实现起来并没有太大区别。</p>
 </blockquote>
 <h1 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h1><p>Windows 上程序涉及网络 socket 操作，一般都会用到 winsock2 的库，程序会动态链接 <code>ws2_32.dll</code> ，JVM，Python，Zend 等解释器都不例外。</p>
@@ -349,8 +352,8 @@
 </blockquote>
 <h2 id="DllMain"><a href="#DllMain" class="headerlink" title="DllMain"></a>DllMain</h2><p>DLL 入口，调用安装钩子</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">BOOL WINAPI <span class="title">DllMain</span><span class="params">(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpReserved)</span> </span>&#123;</span><br><span class="line">	<span class="keyword">switch</span>(fdwReason)</span><br><span class="line">	&#123;</span><br><span class="line">	<span class="keyword">case</span> DLL_PROCESS_ATTACH:</span><br><span class="line">		InstallHook(<span class="string">L"ws2_32.dll"</span>, <span class="string">"recv"</span>, (LPVOID) HookRecv);</span><br><span class="line">		InstallHook(<span class="string">L"ws2_32.dll"</span>, <span class="string">"WSARecv"</span>, (LPVOID) HookWSARecv);</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">case</span> DLL_THREAD_ATTACH:</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">case</span> DLL_THREAD_DETACH:</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	<span class="keyword">case</span> DLL_PROCESS_DETACH:</span><br><span class="line">		<span class="keyword">break</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> TRUE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h1 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h1><h2 id="Java"><a href="#Java" class="headerlink" title="Java"></a>Java</h2><p><img src="/2021/06/25/use-inlinehook-technology-to-make-a-more-general-webshell/java.gif" alt="java"></p>
-<h2 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h2><p><img src="/2021/06/25/use-inlinehook-technology-to-make-a-more-general-webshell/python.gif" alt="python"></p>
+<h1 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h1><h2 id="Java"><a href="#Java" class="headerlink" title="Java"></a>Java</h2><p><img src="/2021/07/01/use-inlinehook-technology-to-make-a-more-general-webshell/java.gif" alt="java"></p>
+<h2 id="Python"><a href="#Python" class="headerlink" title="Python"></a>Python</h2><p><img src="/2021/07/01/use-inlinehook-technology-to-make-a-more-general-webshell/python.gif" alt="python"></p>
 
       
     </div>
@@ -361,11 +364,11 @@
     <div class="copyright">
         <p><span>本文标题:</span><a href="">利用 Hook 技术打造通用的 Webshell</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Jayl1n</a></p>
-        <p><span>发布时间:</span>2021-06-25, 20:08:53</p>
-        <p><span>最后更新:</span>2021-06-25, 14:32:24</p>
+        <p><span>发布时间:</span>2021-07-01, 20:08:53</p>
+        <p><span>最后更新:</span>2021-07-01, 16:55:55</p>
         <p>
-            <span>原始链接:</span><a class="post-url" href="" title="利用 Hook 技术打造通用的 Webshell">https://jayl1n.github.io/2021/06/25/use-inlinehook-technology-to-make-a-more-general-webshell/</a>
-            <span class="copy-path" data-clipboard-text="原文: https://jayl1n.github.io/2021/06/25/use-inlinehook-technology-to-make-a-more-general-webshell/　　作者: Jayl1n" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <span>原始链接:</span><a class="post-url" href="" title="利用 Hook 技术打造通用的 Webshell">https://jayl1n.github.io/2021/07/01/use-inlinehook-technology-to-make-a-more-general-webshell/</a>
+            <span class="copy-path" data-clipboard-text="原文: https://jayl1n.github.io/2021/07/01/use-inlinehook-technology-to-make-a-more-general-webshell/　　作者: Jayl1n" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
             <script> var clipboard = new Clipboard('.copy-path'); </script>
         </p>
         <p>
@@ -379,7 +382,7 @@
         
         
             <div id="article-nav-older" class="article-nav-title">
-                <a href="../../23/compile-v8-on-windows10/">
+                <a href="../../../06/23/compile-v8-on-windows10/">
                     在 Win10 上编译 V8 引擎
                 </a>
             </div>
@@ -447,8 +450,8 @@
     <div id="disqus_thread"></div>
     <script>
         var disqus_config = function(){
-            this.page.url = 'https://jayl1n.github.io/2021/06/25/use-inlinehook-technology-to-make-a-more-general-webshell/';
-            this.page.identifier = '2021/06/25/use-inlinehook-technology-to-make-a-more-general-webshell/';
+            this.page.url = 'https://jayl1n.github.io/2021/07/01/use-inlinehook-technology-to-make-a-more-general-webshell/';
+            this.page.identifier = '2021/07/01/use-inlinehook-technology-to-make-a-more-general-webshell/';
         };
         var loadComment = function(){
             var d = document, s = d.createElement('script');
@@ -476,13 +479,13 @@
         <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
 
         
-            <a href="../../23/compile-v8-on-windows10/" title="下一篇: 在 Win10 上编译 V8 引擎">
+            <a href="../../../06/23/compile-v8-on-windows10/" title="下一篇: 在 Win10 上编译 V8 引擎">
                 <i class="fa fa-angle-right"></i>
             </a>
         
     </div>
 
-    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="">利用 Hook 技术打造通用的 Webshell</a></li><li class="post-list-item"><a class="post-list-link" href="../../23/compile-v8-on-windows10/">在 Win10 上编译 V8 引擎</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/05/antiav-jsp-webshell/">JSP免杀 —— 绕过智能AI？</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/03/compile-virtualbox-on-macos10-15/">MacOS 下编译 VirtualBox</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/04/10/pentest-cobaltstrike-improve/">魔改 CobaltStrike 3.14 实现域前置自定义端口</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/13/java-nohup-implementation/">Java 实现后台执行</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/04/happy-new-year-2020/">2020 大家新年快乐鸭</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/06/26/sctf-2019-babyEoP-Writeup/">SCTF2019 babyEoP Writeup</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/03/29/pentest-getpassword/">Windows下抓取明文密码</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/01/08/tools-load-shellcode/">【GSL】 从内存加载 SHELLCODE 绕过AV查杀</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/12/30/java-audit-step-by-step-4/">从1开始的Java代码审计·第四弹·SSRF</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/11/15/java-audit-step-by-step-3/">从1开始的Java代码审计·第三弹·SQL注入</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/10/29/java-audit-step-by-step-2/">从1开始的Java代码审计·第二弹·基础篇（下）</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/10/25/java-audit-step-by-step-1/">从1开始的Java代码审计·第一弹·基础篇（上）</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/10/25/java-audit-step-by-step-0/">从1开始的Java代码审计·序</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/10/05/pentest-20181005/">渗透日记-20181005</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/09/18/summary-command-execution/">PHP中的命令执行</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/09/11/ichunqiu-web-BLOG/">i春秋-Web-BLOG</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/09/10/ichunqiu-web-SQLi/">i春秋-Web-SQLi</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/09/09/daily-life-20180909/">日常心路-180909</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/08/01/crawl-admin5/">爬虫之批量下载Admin5源码</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/07/31/yesterday-and-tomorrow/">昨天，明天</a></li></ul>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="">利用 Hook 技术打造通用的 Webshell</a></li><li class="post-list-item"><a class="post-list-link" href="../../../06/23/compile-v8-on-windows10/">在 Win10 上编译 V8 引擎</a></li><li class="post-list-item"><a class="post-list-link" href="../../../02/05/antiav-jsp-webshell/">JSP免杀 —— 绕过智能AI？</a></li><li class="post-list-item"><a class="post-list-link" href="../../../01/03/compile-virtualbox-on-macos10-15/">MacOS 下编译 VirtualBox</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/04/10/pentest-cobaltstrike-improve/">魔改 CobaltStrike 3.14 实现域前置自定义端口</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/02/13/java-nohup-implementation/">Java 实现后台执行</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2020/01/04/happy-new-year-2020/">2020 大家新年快乐鸭</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/06/26/sctf-2019-babyEoP-Writeup/">SCTF2019 babyEoP Writeup</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/03/29/pentest-getpassword/">Windows下抓取明文密码</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2019/01/08/tools-load-shellcode/">【GSL】 从内存加载 SHELLCODE 绕过AV查杀</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/12/30/java-audit-step-by-step-4/">从1开始的Java代码审计·第四弹·SSRF</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/11/15/java-audit-step-by-step-3/">从1开始的Java代码审计·第三弹·SQL注入</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/10/29/java-audit-step-by-step-2/">从1开始的Java代码审计·第二弹·基础篇（下）</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/10/25/java-audit-step-by-step-1/">从1开始的Java代码审计·第一弹·基础篇（上）</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/10/25/java-audit-step-by-step-0/">从1开始的Java代码审计·序</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/10/05/pentest-20181005/">渗透日记-20181005</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/09/18/summary-command-execution/">PHP中的命令执行</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/09/11/ichunqiu-web-BLOG/">i春秋-Web-BLOG</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/09/10/ichunqiu-web-SQLi/">i春秋-Web-SQLi</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/09/09/daily-life-20180909/">日常心路-180909</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/08/01/crawl-admin5/">爬虫之批量下载Admin5源码</a></li><li class="post-list-item"><a class="post-list-link" href="../../../../2018/07/31/yesterday-and-tomorrow/">昨天，明天</a></li></ul>
 
 
 
