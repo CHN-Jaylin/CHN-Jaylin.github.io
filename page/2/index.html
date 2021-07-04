@@ -207,7 +207,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../tags/BLOG/">BLOG</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/CTF/">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/JSP/">JSP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/PHP/">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Pentest/">Pentest</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/RedTeam/">RedTeam</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/SQLi/">SQLi</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/i春秋/">i春秋</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/代码审计/">代码审计</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/工具分享/">工具分享</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/开发/">开发</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/心路/">心路</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/日常/">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/爬虫/">爬虫</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/红蓝对抗/">红蓝对抗</a></li></ul>
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="../../tags/BLOG/">BLOG</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/CTF/">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/JSP/">JSP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/PHP/">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Pentest/">Pentest</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Pwn/">Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/RedTeam/">RedTeam</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/SQLi/">SQLi</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/i春秋/">i春秋</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/二进制/">二进制</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/代码审计/">代码审计</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/工具分享/">工具分享</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/开发/">开发</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/心路/">心路</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/日常/">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/爬虫/">爬虫</a></li><li class="tag-list-item"><a class="tag-list-link" href="../../tags/红蓝对抗/">红蓝对抗</a></li></ul>
                     </div>
                 </section>
                 
@@ -291,6 +291,122 @@
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-pentest-cobaltstrike-improve" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="../../2020/04/10/pentest-cobaltstrike-improve/" class="article-date">
+      <time datetime="2020-04-10T07:08:53.000Z" itemprop="datePublished">2020-04-10</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2020/04/10/pentest-cobaltstrike-improve/">魔改 CobaltStrike 3.14 实现域前置自定义端口</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <p>国内VPS的 80,443 端口默认都是需要备案才能使用，所以如果 TeamServer 搭在国内，Listener 只能选择其他端口，一般使用是没什么问题，但如果要配置域前置，会遇到上线不了的问题。</p>
+<h1 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h1><p>我配置了一个 8880 端口的 listener，并配置了 CloudFront （回源端口 8880），生成了指向 80 端口的后门。但运行后并没有上线，Wireshark 抓包分析一下。</p>
+<blockquote>
+<p>为了生成指向 80 端口的后门，我额外配置了一个 80 端口的 listener。</p>
+</blockquote>
+<p>可以看到，第一步确实向 cdn 请求了，也成功从 teamserver 获得了后续的 shellcode 并加载成功了(不然不会有第二步的请求)，但是第二步开始向 8880 端口拉取任务了，这里就出问题了，因为 cdn 域名的 8880 并不能到达 teamserver 的 8880。</p>
+<p>所以我们要修改第二步的请求，强制让它继续和 80 端口通信。</p>
+<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal1.jpg" alt="p1"></p>
+<p>那么，为什么第一步的访问的端口是对的，第二个是错的呢。</p>
+<p>我们知道一般用的CS后门是 staging 模式的，执行过程可以分为两个部分 stage 和 stager 。第一步执行的是 stager ，负责通过各种路径（http&amp;https&amp;tcp）下载 stage，然后注入到内存中执行。第二步的 stage 是真正实现后门功能的部分。</p>
+<p>因为生成 beacon 时，用的 listener 是监听 80 端口的，所以 beacon 第一次请求的确是向 80 端口发起的。</p>
+<p>但实际上 cdn 的 80 端口指向的是 8880 端口的 listener，8880 接到请求，会返回 stage，stage 时在 teamserver 生成的，它并不知道我们是在通过 80 端口访问它，此时的 stage 是指向 8880 的。这造成了后续的请求都会指向 8880。</p>
+<p>要解决问题，必须修改 teamserver 生成的 stage 指向的端口，但搜了一大圈，并没有找到相关的解决方法，AggressorScript 也只能在客户端动动刀子，想要修改 Listener 相关的得要从根源入手。</p>
+<h1 id="杀死问题的办法-——-魔改"><a href="#杀死问题的办法-——-魔改" class="headerlink" title="杀死问题的办法 —— 魔改"></a>杀死问题的办法 —— 魔改</h1><p>我的思路是在创建 listener 的时候，再加一个选项，让 stage 用的端口和 listener 实际监听的端口分开。</p>
+<blockquote>
+<p>当然做👇这些之前要先反编译，我这里用的 <code>fernflower</code> ，用法略过。</p>
+</blockquote>
+<h2 id="0x01-UI"><a href="#0x01-UI" class="headerlink" title="0x01 UI"></a>0x01 UI</h2><p>CobaltStrike 用的是 swing 写的 UI，创建 Listener 的部分在 <code>aggressor.dialogs.ListenerDialog.show()</code></p>
+<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal4.jpg" alt="p4"></p>
+<p>用了 DialogManager 包装了每个 Dialog，调用 <code>DialogManager.text</code> 可以在当前 dialog 创建输入框，命名为 <code>bind port</code>，作为实际监听的端口。</p>
+<p>来加一个输入框：</p>
+<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal6.jpg" alt="p6"></p>
+<p>当 <code>Save</code> 按钮按下时，会在后续触发到 <code>ListenerDialog.dialogResult</code></p>
+<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal5.jpg" alt="p5"></p>
+<p>这里检查了一下 domain 是否超长，通过了，就推送一个 <code>listeners.create</code> 请求到 teamserver，参数是 listener 的名字和配置信息，再之后 listener 就会在 teamserver 建立。</p>
+<p>我们下一步是要把 <code>bind port</code> 传到 <code>this.options</code>，这里有点绕，在调用 <code>DialogManager.text</code> 的时候创建一个内部的 <code>DialogListener</code>。</p>
+<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal7.jpg" alt="p7"></p>
+<p>在 <code>DialogManager.addDilogListenerInternal</code> 可以看到会把创建的 <code>DialogListener</code> 加到</p>
+<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal9.jpg" alt="p9"></p>
+<p><code>Save</code> 按钮实际是 <code>DialogManager.action_noclose</code> 生成的<br>这里的，点击事件可以在这里找到。</p>
+<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal10.jpg" alt="p10"></p>
+<p>这里调用了之前的创建的匿名 <code>DialogListener</code>，将值传到 <code>this.options</code>，所以创建的输入框会自动把值添加到配置里来，😭绕了一圈啥也不用干。</p>
+<p>为了能在 <code>Listeners</code> 这个 Tab 直接看到设置的 <code>bind port</code>， 给 <code>aggressor.windows.ListenerManager</code> 的 <code>cols</code> 加上 <code>bind port</code> 就会自动加载进来了。</p>
+<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal13.jpg" alt="p13"></p>
+<p>效果如下：</p>
+<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal12.jpg" alt="p12"></p>
+<h2 id="0x02-Listener"><a href="#0x02-Listener" class="headerlink" title="0x02 Listener"></a>0x02 Listener</h2><p>在各处调用 Listener 时，会创建 <code>common.Listener</code> 实例，里面是没有 <code>bind port</code> 字段的，所以要给它加上。</p>
+<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal19.jpg" alt="p19"></p>
+<h2 id="0x03-Stage"><a href="#0x03-Stage" class="headerlink" title="0x03 Stage"></a>0x03 Stage</h2><p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal11.jpg" alt="p11"></p>
+<p>teamserver 接到创建 Listener 的请求后，会先把 Listener 序列化保存下来，以便下次 teamserver 重启的时候可以自动监听。</p>
+<p>然后本地调用 <code>beacons.start</code> 。这里的调用链有点长:</p>
+<p>server.Beacons.call() -&gt; server.Beacons.setup() -&gt; beacon.BeaconsSetup.start() -&gt; server.WebCalls.getWebServer() -&gt; beacon.BeaconSetup.exportBeaconStage()</p>
+<p>最主要的是两个地方 <code>server.WebCalls.getWebServer()</code> 创建 Web 服务，<code>beacon.BeaconSetup.exportBeaconStage</code> 构造 Stage 的 shellcode。</p>
+<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal14.jpg" alt="p14"></p>
+<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal15.jpg" alt="p15"></p>
+<p>这里的 <code>var1</code> 是监听的端口号，默认的 Stage 指向的端口和 Listener 监听的端口号是同一个，现在我们要让他们的端口分离，因为 <code>start()</code> 参数不是 <code>Map</code> ，所以不能直接往里加一个参数，只能重写或者重载一下这个方法。</p>
+<p>我直接重写了一下，加了一个参数 <code>bindPort</code>，创建 Web 服务时，就用这个端口。Stage 还是用原来的 <code>var1</code> 作为端口，不用修改。这样创建 <code>Listener</code> 的时候，原来端口号代表 Stage 用的</p>
+<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal16.jpg" alt="p16"></p>
+<p>相应的，上层的调用链也要修改一下。</p>
+<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal17.jpg" alt="p17"></p>
+<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal18.jpg" alt="p18"></p>
+<h2 id="0x05-编译-amp-替换"><a href="#0x05-编译-amp-替换" class="headerlink" title="0x05 编译 &amp; 替换"></a>0x05 编译 &amp; 替换</h2><p>然后要把修改过的代码编译一下，替换到 jar 里。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">javac -cp cobaltstrike.jar common/Listener.java</span><br><span class="line">zip -u cobaltstrike.jar common/Listener.class</span><br><span class="line">javac -cp cobaltstrike.jar aggressor/dialogs/ListenerDialog.java </span><br><span class="line">zip -u cobaltstrike.jar aggressor/dialogs/ListenerDialog.class</span><br><span class="line">javac -cp cobaltstrike.jar aggressor/windows/ListenerManager.java </span><br><span class="line">zip -u cobaltstrike.jar aggressor/windows/ListenerManager.class</span><br><span class="line">javac -cp cobaltstrike.jar server/Beacons.java</span><br><span class="line">zip -u cobaltstrike.jar server/Beacons.class</span><br><span class="line">javac -cp cobaltstrike.jar beacon/BeaconSetup.java </span><br><span class="line">zip -u cobaltstrike.jar beacon/BeaconSetup.class</span><br></pre></td></tr></table></figure>
+<p>⬆️可能有点遗漏的，各位自己调一下吧。</p>
+<h1 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h1><p><img src="/2020/04/10/pentest-cobaltstrike-improve/rrr.jpg" alt="rrr"></p>
+<h1 id="后话"><a href="#后话" class="headerlink" title="后话"></a>后话</h1><p>这是一篇19年的存稿，当时还没有 <a href="https://www.cobaltstrike.com/help-http-beacon" target="_blank" rel="noopener">CS 4.0</a>，这个问题 4.0 已经解决了，可以配置 Listener 的 <code>C2 Port</code> 和 <code>Bind Port</code>，将 C2 的端口与 teamserver 实际监听的端口分开。</p>
+<p>现在放出来，也算抛砖引玉，给想要修改 CS 的小伙计提供点经验，欢迎交流～</p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Pentest/">Pentest</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/RedTeam/">RedTeam</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/红蓝对抗/">红蓝对抗</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-java-nohup-implementation" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -666,76 +782,6 @@
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Pentest/">Pentest</a></li></ul>
     </div>
 
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-tools-load-shellcode" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="../../2019/01/08/tools-load-shellcode/" class="article-date">
-      <time datetime="2019-01-08T07:08:15.000Z" itemprop="datePublished">2019-01-08</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="../../2019/01/08/tools-load-shellcode/">【GSL】 从内存加载 SHELLCODE 绕过AV查杀</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <p>根据 <a href="https://github.com/brimstone/go-shellcode" target="_blank" rel="noopener">go-shellcode</a> 修改，原作者用命令行传 SHELLCODE 的方式有点麻瓜，所以修改了一番。</p>
-<p>亲测可绕 360全家桶。</p>
-<p>X86 &amp; X64 的 SHELLCODE 都可以，用对应 <code>gsl</code> 加载就行了。</p>
-<p>下载：【<a href="https://github.com/Jayl1n/jayl1n.github.io/releases/download/0.1/gsl32.exe" target="_blank" rel="noopener">X86</a>】 【<a href="https://github.com/Jayl1n/jayl1n.github.io/releases/download/0.1/gsl64.exe" target="_blank" rel="noopener">X64</a>】</p>
-<blockquote>
-<p>为减小体积，已用 UPX 加壳压缩。</p>
-</blockquote>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/工具分享/">工具分享</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="../../2019/01/08/tools-load-shellcode/#more">阅读全文 >></a>
-        </p>
       
       <div class="clearfix"></div>
     </div>

