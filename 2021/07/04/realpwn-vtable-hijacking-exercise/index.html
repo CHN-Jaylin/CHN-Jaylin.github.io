@@ -16,13 +16,13 @@
 
 
 
-<meta name="description" content="[RealPwn] 系列是我学习 pwn 的笔记，只记录真实场景中常用到的漏洞利用技术。  C++ 里，为了实现 “多态” ，使用了虚函数表 (vtable)。 每个含有虚函数的类的对象，在内存的起始处有一个 vptr 的指针，指向虚函数表。 虚函数表存了类里所有虚函数的指针。调用函数时，在这个虚函数表里查找实际要调用的函数。 借用网上的一张图  总结下虚函数表的特性：  虚函数表在 .data">
+<meta name="description" content="[RealPwn] 系列是我学习 pwn 的笔记，只记录真实场景中常用到的漏洞利用技术。  虚函数表C++ 里，为了实现 “多态” ，使用了虚函数表 (vtable)。 每个含有虚函数的类的对象，在内存的起始处有一个 vptr 的指针，指向虚函数表。 虚函数表存了类里所有虚函数的指针。调用函数时，在这个虚函数表里查找实际要调用的函数。 借用网上的一张图  特性总结下虚函数表的特性：  虚函数表在">
 <meta name="keywords" content="Pwn,二进制">
 <meta property="og:type" content="article">
 <meta property="og:title" content="【RealPwn-1】 虚函数表劫持练习">
 <meta property="og:url" content="https://jayl1n.github.io/2021/07/04/realpwn-vtable-hijacking-exercise/index.html">
 <meta property="og:site_name" content="Jayl1n&#39;s Blog">
-<meta property="og:description" content="[RealPwn] 系列是我学习 pwn 的笔记，只记录真实场景中常用到的漏洞利用技术。  C++ 里，为了实现 “多态” ，使用了虚函数表 (vtable)。 每个含有虚函数的类的对象，在内存的起始处有一个 vptr 的指针，指向虚函数表。 虚函数表存了类里所有虚函数的指针。调用函数时，在这个虚函数表里查找实际要调用的函数。 借用网上的一张图  总结下虚函数表的特性：  虚函数表在 .data">
+<meta property="og:description" content="[RealPwn] 系列是我学习 pwn 的笔记，只记录真实场景中常用到的漏洞利用技术。  虚函数表C++ 里，为了实现 “多态” ，使用了虚函数表 (vtable)。 每个含有虚函数的类的对象，在内存的起始处有一个 vptr 的指针，指向虚函数表。 虚函数表存了类里所有虚函数的指针。调用函数时，在这个虚函数表里查找实际要调用的函数。 借用网上的一张图  特性总结下虚函数表的特性：  虚函数表在">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="https://jayl1n.github.io/2021/07/04/realpwn-vtable-hijacking-exercise/vft.png">
 <meta property="og:image" content="https://jayl1n.github.io/2021/07/04/realpwn-vtable-hijacking-exercise/image-20210702163648268.png">
@@ -35,10 +35,10 @@
 <meta property="og:image" content="https://jayl1n.github.io/2021/07/04/realpwn-vtable-hijacking-exercise/image-20210702174636492.png">
 <meta property="og:image" content="https://jayl1n.github.io/2021/07/04/realpwn-vtable-hijacking-exercise/image-20210702173559882.png">
 <meta property="og:image" content="https://jayl1n.github.io/2021/07/04/realpwn-vtable-hijacking-exercise/vtable-hijacking.gif">
-<meta property="og:updated_time" content="2021-07-04T02:59:29.113Z">
+<meta property="og:updated_time" content="2021-07-04T09:35:19.203Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="【RealPwn-1】 虚函数表劫持练习">
-<meta name="twitter:description" content="[RealPwn] 系列是我学习 pwn 的笔记，只记录真实场景中常用到的漏洞利用技术。  C++ 里，为了实现 “多态” ，使用了虚函数表 (vtable)。 每个含有虚函数的类的对象，在内存的起始处有一个 vptr 的指针，指向虚函数表。 虚函数表存了类里所有虚函数的指针。调用函数时，在这个虚函数表里查找实际要调用的函数。 借用网上的一张图  总结下虚函数表的特性：  虚函数表在 .data">
+<meta name="twitter:description" content="[RealPwn] 系列是我学习 pwn 的笔记，只记录真实场景中常用到的漏洞利用技术。  虚函数表C++ 里，为了实现 “多态” ，使用了虚函数表 (vtable)。 每个含有虚函数的类的对象，在内存的起始处有一个 vptr 的指针，指向虚函数表。 虚函数表存了类里所有虚函数的指针。调用函数时，在这个虚函数表里查找实际要调用的函数。 借用网上的一张图  特性总结下虚函数表的特性：  虚函数表在">
 <meta name="twitter:image" content="https://jayl1n.github.io/2021/07/04/realpwn-vtable-hijacking-exercise/vft.png">
 
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -341,12 +341,12 @@
         <blockquote>
 <p>[RealPwn] 系列是我学习 pwn 的笔记，只记录真实场景中常用到的漏洞利用技术。</p>
 </blockquote>
-<p>C++ 里，为了实现 “多态” ，使用了虚函数表 (vtable)。</p>
+<h1 id="虚函数表"><a href="#虚函数表" class="headerlink" title="虚函数表"></a>虚函数表</h1><p>C++ 里，为了实现 “多态” ，使用了虚函数表 (vtable)。</p>
 <p>每个含有虚函数的类的对象，在内存的起始处有一个 vptr 的指针，指向虚函数表。</p>
 <p>虚函数表存了类里所有虚函数的指针。调用函数时，在这个虚函数表里查找实际要调用的函数。</p>
 <p>借用网上的一张图</p>
 <p><img src="/2021/07/04/realpwn-vtable-hijacking-exercise/vft.png" alt="vft.png"></p>
-<p>总结下虚函数表的特性：</p>
+<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><p>总结下虚函数表的特性：</p>
 <ol>
 <li><p>虚函数表在 <code>.data</code> 段，仅可读，无法修改</p>
 </li>
@@ -355,7 +355,7 @@
 <li><p>虚函数表指针 vptr 一般在对象起始的 4 字节（32 位） 或 8 字节（64 位），多重继承时有可能存在多个虚函数表，</p>
 </li>
 </ol>
-<p>下面调试一下，环境 VS2019 + x32dbg：</p>
+<h1 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h1><p>下面调试一下，环境 VS2019 + x32dbg：</p>
 <p>代码：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;iostream&gt;</span><br><span class="line">#include &lt;Windows.h&gt;</span><br><span class="line"></span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">class A &#123;</span><br><span class="line">public :</span><br><span class="line">	virtual int hijackme() &#123;</span><br><span class="line">		return 1;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">	char msg[128];</span><br><span class="line"></span><br><span class="line">	A* a = new A;</span><br><span class="line">	long* a_addr = (long*) a;</span><br><span class="line">	long* vptr = (long*) ( *a_addr);</span><br><span class="line"></span><br><span class="line">	sprintf(msg, &quot;object a address: 0x%p&quot;, a_addr);</span><br><span class="line">	cout &lt;&lt; msg &lt;&lt; endl;</span><br><span class="line">	sprintf(msg, &quot;vtable address: 0x%p&quot;, vptr[0]);</span><br><span class="line">	cout &lt;&lt; msg &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">	system(&quot;pause&quot;);</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><img src="/2021/07/04/realpwn-vtable-hijacking-exercise/image-20210702163648268.png" alt="image-20210702163648268"></p>
@@ -393,7 +393,7 @@
         <p><span>本文标题:</span><a href="">【RealPwn-1】 虚函数表劫持练习</a></p>
         <p><span>文章作者:</span><a href="/" title="回到主页">Jayl1n</a></p>
         <p><span>发布时间:</span>2021-07-04, 10:54:28</p>
-        <p><span>最后更新:</span>2021-07-04, 10:59:29</p>
+        <p><span>最后更新:</span>2021-07-04, 17:35:19</p>
         <p>
             <span>原始链接:</span><a class="post-url" href="" title="【RealPwn-1】 虚函数表劫持练习">https://jayl1n.github.io/2021/07/04/realpwn-vtable-hijacking-exercise/</a>
             <span class="copy-path" data-clipboard-text="原文: https://jayl1n.github.io/2021/07/04/realpwn-vtable-hijacking-exercise/　　作者: Jayl1n" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
@@ -423,7 +423,7 @@
     <div id="toc" class="toc-article">
         <strong class="toc-title">文章目录</strong>
         
-            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#References"><span class="toc-number">1.</span> <span class="toc-text">References</span></a></li></ol>
+            <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#虚函数表"><span class="toc-number">1.</span> <span class="toc-text">虚函数表</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#特性"><span class="toc-number">1.1.</span> <span class="toc-text">特性</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#调试"><span class="toc-number">2.</span> <span class="toc-text">调试</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#References"><span class="toc-number">3.</span> <span class="toc-text">References</span></a></li></ol>
         
     </div>
     <style>

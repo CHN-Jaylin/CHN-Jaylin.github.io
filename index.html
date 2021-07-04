@@ -324,12 +324,12 @@
         <blockquote>
 <p>[RealPwn] 系列是我学习 pwn 的笔记，只记录真实场景中常用到的漏洞利用技术。</p>
 </blockquote>
-<p>C++ 里，为了实现 “多态” ，使用了虚函数表 (vtable)。</p>
+<h1 id="虚函数表"><a href="#虚函数表" class="headerlink" title="虚函数表"></a>虚函数表</h1><p>C++ 里，为了实现 “多态” ，使用了虚函数表 (vtable)。</p>
 <p>每个含有虚函数的类的对象，在内存的起始处有一个 vptr 的指针，指向虚函数表。</p>
 <p>虚函数表存了类里所有虚函数的指针。调用函数时，在这个虚函数表里查找实际要调用的函数。</p>
 <p>借用网上的一张图</p>
 <p><img src="/2021/07/04/realpwn-vtable-hijacking-exercise/vft.png" alt="vft.png"></p>
-<p>总结下虚函数表的特性：</p>
+<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><p>总结下虚函数表的特性：</p>
 <ol>
 <li><p>虚函数表在 <code>.data</code> 段，仅可读，无法修改</p>
 </li>
@@ -338,7 +338,7 @@
 <li><p>虚函数表指针 vptr 一般在对象起始的 4 字节（32 位） 或 8 字节（64 位），多重继承时有可能存在多个虚函数表，</p>
 </li>
 </ol>
-<p>下面调试一下，环境 VS2019 + x32dbg：</p>
+<h1 id="调试"><a href="#调试" class="headerlink" title="调试"></a>调试</h1><p>下面调试一下，环境 VS2019 + x32dbg：</p>
 <p>代码：</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;iostream&gt;</span><br><span class="line">#include &lt;Windows.h&gt;</span><br><span class="line"></span><br><span class="line">using namespace std;</span><br><span class="line"></span><br><span class="line">class A &#123;</span><br><span class="line">public :</span><br><span class="line">	virtual int hijackme() &#123;</span><br><span class="line">		return 1;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">	char msg[128];</span><br><span class="line"></span><br><span class="line">	A* a = new A;</span><br><span class="line">	long* a_addr = (long*) a;</span><br><span class="line">	long* vptr = (long*) ( *a_addr);</span><br><span class="line"></span><br><span class="line">	sprintf(msg, &quot;object a address: 0x%p&quot;, a_addr);</span><br><span class="line">	cout &lt;&lt; msg &lt;&lt; endl;</span><br><span class="line">	sprintf(msg, &quot;vtable address: 0x%p&quot;, vptr[0]);</span><br><span class="line">	cout &lt;&lt; msg &lt;&lt; endl;</span><br><span class="line"></span><br><span class="line">	system(&quot;pause&quot;);</span><br><span class="line">	return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><img src="/2021/07/04/realpwn-vtable-hijacking-exercise/image-20210702163648268.png" alt="image-20210702163648268"></p>
