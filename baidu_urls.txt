@@ -1,3 +1,4 @@
+https://jayl1n.github.io/2021/07/07/realpwn-heap-spary-exercise/
 https://jayl1n.github.io/2021/07/04/realpwn-vtable-hijacking-exercise/
 https://jayl1n.github.io/2021/07/01/use-inlinehook-technology-to-make-a-more-general-webshell/
 https://jayl1n.github.io/2021/06/23/compile-v8-on-windows10/
